@@ -15,7 +15,7 @@ import javax.ws.rs.Produces;
 import org.jboss.logging.Logger;
 
 import com.wangtak.mx.database.EMF;
-import com.wangtak.mx.entity.MenuCatagory;
+import com.wangtak.mx.entity.MenuCategory;
 import com.wangtak.mx.entity.MenuCombo;
 
 /**
@@ -27,22 +27,15 @@ public class MenuEndpoint {
 	private static Logger log = Logger.getLogger(MenuEndpoint.class);
 	
 	@GET
-	@Path("/test")
-	public String getTest()
-	{
-		return "Test";
-	}
-	
-	@GET
-	@Path("/catagory")
+	@Path("/category")
 	@Produces("application/json")
-	public List<MenuCatagory> getMenuCatagory()
+	public List<MenuCategory> getMenuCatagory()
 	{
-		log.info("getMenuCatagory");
-		List<MenuCatagory> catagoryList = new ArrayList();
+		log.info("getMenuCategory");
+		List<MenuCategory> catagoryList = new ArrayList();
 		EntityManager em = EMF.get().createEntityManager();
 		try {
-			 Query query = em.createQuery("SELECT c FROM MenuCatagory AS c", MenuCatagory.class);
+			 Query query = em.createQuery("SELECT c FROM MenuCategory AS c", MenuCategory.class);
 			 //results.addAll(query.getResultList());
 			 catagoryList = query.getResultList();
 //			 for(Property p:results)

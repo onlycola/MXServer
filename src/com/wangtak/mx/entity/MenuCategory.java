@@ -18,15 +18,14 @@ import javax.persistence.OneToMany;
  *
  */
 @Entity
-public class MenuItem {
+public class MenuCategory {
 	@Id @GeneratedValue
 	int id; //unique id
-	int sort_order; //sort the item based on sort_order
+	int sort_order; //sort the items based on sort_order
 	@Column(nullable = false)
-	String title; //title for menu item
-	String subtitle; //subtitle for menu item
-	@OneToMany(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
-	Set<MenuItemOption> menuItemOptionList; // Menu Options for this menu item
+	String title; //title for MenuCategory
+	@OneToMany(fetch=FetchType.EAGER,cascade=CascadeType.DETACH)
+	Set<MenuItem> menuItemList; // Menu items for this category
 	/**
 	 * @return the id
 	 */
@@ -39,7 +38,6 @@ public class MenuItem {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
 	/**
 	 * @return the title
 	 */
@@ -52,17 +50,18 @@ public class MenuItem {
 	public void setTitle(String title) {
 		this.title = title;
 	}
+	
 	/**
-	 * @return the subtitle
+	 * @return the menuItemList
 	 */
-	public String getSubtitle() {
-		return subtitle;
+	public Set<MenuItem> getMenuItemList() {
+		return menuItemList;
 	}
 	/**
-	 * @param subtitle the subtitle to set
+	 * @param menuItemList the menuItemList to set
 	 */
-	public void setSubtitle(String subtitle) {
-		this.subtitle = subtitle;
+	public void setMenuItemList(Set<MenuItem> menuItemList) {
+		this.menuItemList = menuItemList;
 	}
 	/**
 	 * @return the sort_order
@@ -75,17 +74,5 @@ public class MenuItem {
 	 */
 	public void setSort_order(int sort_order) {
 		this.sort_order = sort_order;
-	}
-	/**
-	 * @return the menuItemOptionList
-	 */
-	public Set<MenuItemOption> getMenuItemOptionList() {
-		return menuItemOptionList;
-	}
-	/**
-	 * @param menuItemOptionList the menuItemOptionList to set
-	 */
-	public void setMenuItemOptionList(Set<MenuItemOption> menuItemOptionList) {
-		this.menuItemOptionList = menuItemOptionList;
 	}
 }

@@ -9,10 +9,11 @@
         <description>HomePageDS Persistence Unit.</description>
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <non-jta-data-source>java:jboss/datasources/MXServer</non-jta-data-source>
-        <class>com.wangtak.mx.entity.MenuCatagory</class>
+        <class>com.wangtak.mx.entity.MenuCategory</class>
         <class>com.wangtak.mx.entity.MenuCombo</class>
         <class>com.wangtak.mx.entity.MenuItem</class>
         <class>com.wangtak.mx.entity.MenuItemOption</class>
+        <class>com.wangtak.mx.entity.ComboItem</class>
         <properties>
         	<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
         	<property name="hibernate.hbm2ddl.auto" value="update"/>
