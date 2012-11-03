@@ -10,22 +10,17 @@ import java.util.List;
  *
  */
 public class SubmitOrderInput {
-	class MenuOrder
-	{
-		int menuItemId;
-		int menuOptionId;
-		int amount;
-	}
-	class ComboOrder
-	{
-		int comboId;
-		int amount;
-	}
+	//Order Content
 	List<MenuOrder> menuOrderList;
 	List<ComboOrder> comboOrderList;
+	//Customer Info
 	String customerName;
 	String customerPhoneNumber;
 	String customerEmail;
+	boolean isReceivePromotion;
+	//Credit Card
+	CreditCard creditCard;
+	
 	/**
 	 * @return the menuOrderList
 	 */
@@ -85,6 +80,16 @@ public class SubmitOrderInput {
 	 */
 	public void setCustomerEmail(String customerEmail) {
 		this.customerEmail = customerEmail;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "SubmitOrderInput [menuOrderList=" + menuOrderList
+				+ ", comboOrderList=" + comboOrderList + ", customerName="
+				+ customerName + ", customerPhoneNumber=" + customerPhoneNumber
+				+ ", customerEmail=" + customerEmail + "]";
 	}
 	
 }

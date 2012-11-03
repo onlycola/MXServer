@@ -26,6 +26,8 @@ public class CreditCardDiscountRule {
 	double discountRate =1.0; //discount rate
 	@Column(nullable = true)
 	String discountDescription; //the description for the discount rule
+	@Column(nullable = false)
+	String bankHeader;//bankHeader is a start number of each bank's credit, use it to verify the customer input
 	/**
 	 * @return the id
 	 */
@@ -97,5 +99,17 @@ public class CreditCardDiscountRule {
 	 */
 	public void setDiscountDescription(String discountDescription) {
 		this.discountDescription = discountDescription;
+	}
+	/**
+	 * @return the bankHeader
+	 */
+	public String getBankHeader() {
+		return bankHeader;
+	}
+	/**
+	 * @param bankHeader the bankHeader to set
+	 */
+	public void setBankHeader(String bankHeader) {
+		this.bankHeader = bankHeader;
 	}
 }

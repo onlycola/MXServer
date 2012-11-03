@@ -10,9 +10,9 @@ import javax.ws.rs.Produces;
 
 import org.jboss.logging.Logger;
 
+import com.wangtak.mx.endpoint.data.MenuOrder;
 import com.wangtak.mx.endpoint.data.SubmitOrderInput;
 import com.wangtak.mx.endpoint.data.SubmitOrderResponse;
-import com.wangtak.mx.entity.Poster;
 
 /**
  * @author yuzhao
@@ -28,7 +28,11 @@ public class OnlineOrderEndpoint {
 	@Produces("application/json")
 	public SubmitOrderResponse submitOrder(SubmitOrderInput input)
 	{
-		log.info("SubmitOrderResponse: with input:"+ input.getCustomerName());
+		log.info("SubmitOrderResponse: with input:"+ input);
+//		for(MenuOrder menuOrder:input.getMenuOrderList())
+//		{
+//			log.info("menu order:"+menuOrder);
+//		}
 		SubmitOrderResponse response = new SubmitOrderResponse();
 		response.setOrderId("1234567890");
 		response.setUrl("http://mx.wangtaktech.com");
