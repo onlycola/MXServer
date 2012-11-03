@@ -13,12 +13,12 @@ import javax.persistence.Id;
  *
  */
 @Entity
-public class Poster {
+public class DeliveryArea {
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	int id; //unique id
-	int sort_order; //sort the item based on sort_order
-	String image_url;
-	String link_url;
+	int sort_order; //sort the items based on sort_order
+	String title; //area title
+	double deliveryFee; //delivery fee
 	/**
 	 * @return the id
 	 */
@@ -44,27 +44,27 @@ public class Poster {
 		this.sort_order = sort_order;
 	}
 	/**
-	 * @return the image_url
+	 * @return the title
 	 */
-	public String getImage_url() {
-		return image_url;
+	public String getTitle() {
+		return title;
 	}
 	/**
-	 * @param image_url the image_url to set
+	 * @param title the title to set
 	 */
-	public void setImage_url(String image_url) {
-		this.image_url = image_url;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	/**
-	 * @return the link_url
+	 * @return the deliveryFee
 	 */
-	public String getLink_url() {
-		return link_url;
+	public double getDeliveryFee() {
+		return deliveryFee;
 	}
 	/**
-	 * @param link_url the link_url to set
+	 * @param deliveryFee the deliveryFee to set
 	 */
-	public void setLink_url(String link_url) {
-		this.link_url = link_url;
+	public void setDeliveryFee(double deliveryFee) {
+		this.deliveryFee = deliveryFee;
 	}
 }

@@ -6,6 +6,7 @@ package com.wangtak.mx.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
@@ -14,7 +15,7 @@ import javax.persistence.Id;
  */
 @Entity
 public class MenuItemOption {
-	@Id @GeneratedValue
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	int id; //unqiue id
 	int sort_order;//sort the item based on sort_order
 	@Column(nullable = false)

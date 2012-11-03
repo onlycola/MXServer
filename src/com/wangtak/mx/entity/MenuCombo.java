@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
@@ -19,7 +20,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class MenuCombo {
-	@Id @GeneratedValue
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	int id; //unique id
 	int sort_order; //sort item based on sort_order
 	@Column(nullable = false)

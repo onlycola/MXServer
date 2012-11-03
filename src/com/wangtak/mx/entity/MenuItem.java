@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
@@ -19,12 +20,13 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class MenuItem {
-	@Id @GeneratedValue
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	int id; //unique id
 	int sort_order; //sort the item based on sort_order
 	@Column(nullable = false)
 	String title; //title for menu item
 	String subtitle; //subtitle for menu item
+	String picturURL; //the image url for this menu item
 	@OneToMany(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
 	Set<MenuItemOption> menuItemOptionList; // Menu Options for this menu item
 	/**
@@ -87,5 +89,17 @@ public class MenuItem {
 	 */
 	public void setMenuItemOptionList(Set<MenuItemOption> menuItemOptionList) {
 		this.menuItemOptionList = menuItemOptionList;
+	}
+	/**
+	 * @return the picturURL
+	 */
+	public String getPicturURL() {
+		return picturURL;
+	}
+	/**
+	 * @param picturURL the picturURL to set
+	 */
+	public void setPicturURL(String picturURL) {
+		this.picturURL = picturURL;
 	}
 }
