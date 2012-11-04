@@ -8,8 +8,9 @@ package com.wangtak.mx.endpoint.data;
  *
  */
 public class SubmitOrderResponse {
-	String orderId; //identity for the order
+	String orderId; //identity for the order. return 0, if the submit failed
 	String url; // url for get the order content, must fetch by https://
+	String error; //Error String
 	
 	/**
 	 * @return the orderId
@@ -34,5 +35,17 @@ public class SubmitOrderResponse {
 	 */
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	/**
+	 * @return the error
+	 */
+	public String getError() {
+		return error;
+	}
+	/**
+	 * @param error the error to set
+	 */
+	public void setError(String error) {
+		this.error = error;
 	}
 }

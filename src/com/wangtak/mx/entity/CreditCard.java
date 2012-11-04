@@ -1,19 +1,27 @@
 /**
  * 
  */
-package com.wangtak.mx.endpoint.data;
+package com.wangtak.mx.entity;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  * @author yuzhao
  *
  */
+@Entity
 public class CreditCard {
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+	int id;
 	String holder;
-	String cardNumber;
+	String cardNumber; //only last 4 digital
 	int cardType;//0 for visa, 1 for master
 	int creditCardBankId; // consistent to CrediCardDsicountRuleId
-	int validMonth;
-	int validYear;
+	String validMonth;
+	String validYear;
 	/**
 	 * @return the holder
 	 */
@@ -65,25 +73,35 @@ public class CreditCard {
 	/**
 	 * @return the validMonth
 	 */
-	public int getValidMonth() {
+	public String getValidMonth() {
 		return validMonth;
 	}
 	/**
 	 * @param validMonth the validMonth to set
 	 */
-	public void setValidMonth(int validMonth) {
+	public void setValidMonth(String validMonth) {
 		this.validMonth = validMonth;
 	}
 	/**
 	 * @return the validYear
 	 */
-	public int getValidYear() {
+	public String getValidYear() {
 		return validYear;
 	}
 	/**
 	 * @param validYear the validYear to set
 	 */
-	public void setValidYear(int validYear) {
+	public void setValidYear(String validYear) {
 		this.validYear = validYear;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "CreditCard [holder=" + holder + ", cardNumber=" + cardNumber
+				+ ", cardType=" + cardType + ", creditCardBankId="
+				+ creditCardBankId + ", validMonth=" + validMonth
+				+ ", validYear=" + validYear + "]";
 	}
 }

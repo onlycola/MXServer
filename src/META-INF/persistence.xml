@@ -17,8 +17,12 @@
         <class>com.wangtak.mx.entity.CreditCardDiscountRule</class>
         <class>com.wangtak.mx.entity.DeliveryArea</class>
         <class>com.wangtak.mx.entity.Poster</class>
-        <class>com.wangtak.mx.entity.DeliveryNote</class>
-        <class>com.wangtak.mx.entity.PickupNote</class>
+        <class>com.wangtak.mx.entity.CustomerOrder</class>
+        <class>com.wangtak.mx.entity.MenuOrder</class>
+        <class>com.wangtak.mx.entity.ComboOrder</class>
+        <class>com.wangtak.mx.entity.CreditCard</class>
+        <class>com.wangtak.mx.entity.DeliveryInfo</class>
+        <class>com.wangtak.mx.entity.PickupInfo</class>
         
         <properties>
         	<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
