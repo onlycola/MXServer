@@ -28,17 +28,23 @@ public class CustomerOrder {
 	@Column(unique = true)
 	String uniqueURL;
 	@Column(unique = true)
-	String referenceCode;//PT+date+phone+shop id+2 digital number
+	String orderCode;//PT+date+phone+shop id+2 digital number
 	@Column(unique = true)
 	String paymentReference; //the tx reference return from payment gateway
 	OrderStatus status;
 	Date createDate;
+	double amount;
+	double deliveryFee;
 	
 	// Order Content
 	@OneToMany(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
 	Set<MenuOrder> menuOrderList;
 	@OneToMany(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
 	Set<ComboOrder> comboOrderList;
+	
+	//Gift
+	@OneToMany(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
+	Set<CustomerOrderGift> giftList;
 	
 	// Customer Info
 	String customerName;
@@ -191,20 +197,6 @@ public class CustomerOrder {
 	}
 
 	/**
-	 * @return the referenceCode
-	 */
-	public String getReferenceCode() {
-		return referenceCode;
-	}
-
-	/**
-	 * @param referenceCode the referenceCode to set
-	 */
-	public void setReferenceCode(String referenceCode) {
-		this.referenceCode = referenceCode;
-	}
-
-	/**
 	 * @return the paymentReference
 	 */
 	public String getPaymentReference() {
@@ -288,20 +280,79 @@ public class CustomerOrder {
 		this.comboOrderList = comboOrderList;
 	}
 
+	/**
+	 * @return the orderCode
+	 */
+	public String getOrderCode() {
+		return orderCode;
+	}
+
+	/**
+	 * @param orderCode the orderCode to set
+	 */
+	public void setOrderCode(String orderCode) {
+		this.orderCode = orderCode;
+	}
+
+	/**
+	 * @return the amount
+	 */
+	public double getAmount() {
+		return amount;
+	}
+
+	/**
+	 * @param amount the amount to set
+	 */
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+
+	/**
+	 * @return the deliveryFee
+	 */
+	public double getDeliveryFee() {
+		return deliveryFee;
+	}
+
+	/**
+	 * @param deliveryFee the deliveryFee to set
+	 */
+	public void setDeliveryFee(double deliveryFee) {
+		this.deliveryFee = deliveryFee;
+	}
+
+	/**
+	 * @return the giftList
+	 */
+	public Set<CustomerOrderGift> getGiftList() {
+		return giftList;
+	}
+
+	/**
+	 * @param giftList the giftList to set
+	 */
+	public void setGiftList(Set<CustomerOrderGift> giftList) {
+		this.giftList = giftList;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "CustomerOrder [id=" + id + ", referenceCode=" + referenceCode
-				+ ", paymentReference=" + paymentReference + ", status="
-				+ status + ", createDate=" + createDate + ", menuOrderList="
-				+ menuOrderList + ", comboOrderList=" + comboOrderList
-				+ ", customerName=" + customerName + ", customerPhoneNumber="
-				+ customerPhoneNumber + ", customerEmail=" + customerEmail
-				+ ", receivePromotion=" + receivePromotion + ", creditCard="
-				+ creditCard + ", pickup=" + pickup + ", pickupInfo="
-				+ pickupInfo + ", deliveryInfo=" + deliveryInfo + "]";
+		return "CustomerOrder [id=" + id + ", uniqueURL=" + uniqueURL
+				+ ", orderCode=" + orderCode + ", paymentReference="
+				+ paymentReference + ", status=" + status + ", createDate="
+				+ createDate + ", amount=" + amount + ", deliveryFee="
+				+ deliveryFee + ", menuOrderList=" + menuOrderList
+				+ ", comboOrderList=" + comboOrderList + ", giftList="
+				+ giftList + ", customerName=" + customerName
+				+ ", customerPhoneNumber=" + customerPhoneNumber
+				+ ", customerEmail=" + customerEmail + ", receivePromotion="
+				+ receivePromotion + ", creditCard=" + creditCard + ", pickup="
+				+ pickup + ", pickupInfo=" + pickupInfo + ", deliveryInfo="
+				+ deliveryInfo + "]";
 	}
 
 }

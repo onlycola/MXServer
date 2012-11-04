@@ -20,7 +20,7 @@ public class DeliveryInfo {
 	int id;
 	Date date;
 	String deliveryAddress;
-	String deliveryAreaId;//consitent to DeliveryArea id
+	int deliveryAreaId;//consitent to DeliveryArea id
 	String deliveryPeriod;
 	String name;
 	String phoneNumber;
@@ -51,13 +51,13 @@ public class DeliveryInfo {
 	/**
 	 * @return the deliveryAreaId
 	 */
-	public String getDeliveryAreaId() {
+	public int getDeliveryAreaId() {
 		return deliveryAreaId;
 	}
 	/**
 	 * @param deliveryAreaId the deliveryAreaId to set
 	 */
-	public void setDeliveryAreaId(String deliveryAreaId) {
+	public void setDeliveryAreaId(int deliveryAreaId) {
 		this.deliveryAreaId = deliveryAreaId;
 	}
 	/**

@@ -8,20 +8,20 @@ package com.wangtak.mx.endpoint.data;
  *
  */
 public class SubmitOrderResponse {
-	String orderId; //identity for the order. return 0, if the submit failed
+	int orderId; //identity for the order. return 0, if the submit failed
 	String url; // url for get the order content, must fetch by https://
 	String error; //Error String
 	
 	/**
 	 * @return the orderId
 	 */
-	public String getOrderId() {
+	public int getOrderId() {
 		return orderId;
 	}
 	/**
 	 * @param orderId the orderId to set
 	 */
-	public void setOrderId(String orderId) {
+	public void setOrderId(int orderId) {
 		this.orderId = orderId;
 	}
 	/**

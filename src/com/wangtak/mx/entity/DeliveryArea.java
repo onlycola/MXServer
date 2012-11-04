@@ -19,6 +19,7 @@ public class DeliveryArea {
 	int sort_order; //sort the items based on sort_order
 	String title; //area title
 	double deliveryFee; //delivery fee
+	boolean freeArea; //free promotion cover this area
 	/**
 	 * @return the id
 	 */
@@ -66,5 +67,17 @@ public class DeliveryArea {
 	 */
 	public void setDeliveryFee(double deliveryFee) {
 		this.deliveryFee = deliveryFee;
+	}
+	/**
+	 * @return the freeArea
+	 */
+	public boolean isFreeArea() {
+		return freeArea;
+	}
+	/**
+	 * @param freeArea the freeArea to set
+	 */
+	public void setFreeArea(boolean freeArea) {
+		this.freeArea = freeArea;
 	}
 }

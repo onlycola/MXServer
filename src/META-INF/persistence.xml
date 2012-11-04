@@ -23,6 +23,8 @@
         <class>com.wangtak.mx.entity.CreditCard</class>
         <class>com.wangtak.mx.entity.DeliveryInfo</class>
         <class>com.wangtak.mx.entity.PickupInfo</class>
+        <class>com.wangtak.mx.entity.CustomerOrderGift</class>
+        
         
         <properties>
         	<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>

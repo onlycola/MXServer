@@ -8,19 +8,19 @@ package com.wangtak.mx.endpoint.data;
  *
  */
 public class ConfirmOrderInput {
-	String orderId;
+	int orderId;
 	String uniqueURL;
 	String cardNumber; //full credit card number
 	/**
 	 * @return the orderId
 	 */
-	public String getOrderId() {
+	public int getOrderId() {
 		return orderId;
 	}
 	/**
 	 * @param orderId the orderId to set
 	 */
-	public void setOrderId(String orderId) {
+	public void setOrderId(int orderId) {
 		this.orderId = orderId;
 	}
 	/**
