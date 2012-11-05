@@ -10,6 +10,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Resource;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.ws.rs.Consumes;
@@ -46,12 +55,16 @@ public class OnlineOrderEndpoint {
 	public static final int GeneralError = 0;
 	public static final int CreditCardError = 1;
 	public static final int OutOfDate = 2;
+	public static final int NotExist = 3;
 	
-	private static final String Prefix = "http://127.0.0.1:8080/MXServer/api/order/";
+	//private static final String Prefix = "http://127.0.0.1:8080/MXServer/api/order/";
+	private static final String Prefix = "http://mx.wangtaktech.com/api/order/";
 	private static final int VALID_PERIOD = -10; // 10min
-	// private static final String Prefix =
-	// "http://mx.wangtaktech.com/api/order/";
 	private static Logger log = Logger.getLogger(OnlineOrderEndpoint.class);
+	
+    @Resource(name="java:jboss/mail/Default")
+    private Session mailSession;
+
 
 	@POST
 	@Path("/submit")
@@ -66,6 +79,8 @@ public class OnlineOrderEndpoint {
 		EntityManager em = EMF.get().createEntityManager();
 		try {
 			// 1.calculate order
+			//Generate Order Code
+			order.setOrderCode(order.generateOrderCode());
 			// 1.1 caculate menu item
 			int bankId = order.getCreditCard().getCreditCardBankId();
 			CreditCardDiscountRule rule = em.find(CreditCardDiscountRule.class,
@@ -216,8 +231,45 @@ public class OnlineOrderEndpoint {
 				em.getTransaction().begin();
 				em.persist(order);
 				em.getTransaction().commit();
-			}
+				
+				//test send email
+				if(mailSession != null)
+				{
+					try{
+						MimeMessage m = new MimeMessage(mailSession);
+				         Address from = new InternetAddress("cn.yu.zhao@gmail.com");
+				         Address[] to = new InternetAddress[] {new InternetAddress("cn.yu.zhao@gmail.com") };
+
+				         m.setFrom(from);
+
+				         m.setRecipients(Message.RecipientType.TO, to);
+
+				         m.setSubject("JavaMail Test - 2 ");
+	
+				         m.setSentDate(new java.util.Date());
 			
+				         m.setContent("Test from inside JBoss AS7 Server","text/plain");
+			
+				         Transport.send(m);
+					} catch (AddressException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (MessagingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					finally
+					{
+						
+					}
+					 	
+
+				}
+				else
+				{
+					log.equals("big problem");
+				}
+			}
 			
 		} finally {
 			em.close();
@@ -248,7 +300,7 @@ public class OnlineOrderEndpoint {
 			List<CustomerOrder> orders = query.getResultList();
 			if (orders.size() > 0) {
 				response = "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><body><h1>Order Content:</h1>"
-						+ orders.get(0).getPickupInfo().toString()
+						+ orders.get(0).toString()
 						+ "</body></html>";
 			} else {
 				response = "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><body><h1>Not Found</h1></body></html>";
@@ -267,74 +319,97 @@ public class OnlineOrderEndpoint {
 		log.info("confirmOrder" + input);
 		ConfirmOrderResult result = new ConfirmOrderResult();
 		result.setSucceed(false);
-		result.setUrl(Prefix + "failed/"+GeneralError);
-		EntityManager em = EMF.get().createEntityManager();
-		try {
-			// 1.find out the order
-			CustomerOrder order = em.find(CustomerOrder.class, input.getOrderId());
-			if (order != null && order.getStatus()==OrderStatus.Submit &&
-					input.getUniqueURL().compareTo(Prefix + "review/" + order.getUniqueURL()) == 0) 
-			{
-				log.info("get order: "+order.toString());
-				Calendar calendar = Calendar.getInstance();
-				calendar.add(Calendar.MINUTE, VALID_PERIOD);
-				if (order.getCreateDate().compareTo(calendar.getTime()) >= 0) {
-					// 2. calculate the amount
-					double amount = 0.0;
-					String cardType = "";
-					switch (order.getCreditCard().getCardType()) {
-					case 0:
-						cardType = "VISA";
-						break;
-					case 1:
-						cardType = "MASTER";
-						break;
-					default:
+		result.setUrl(Prefix + "failed/" + GeneralError);
+		do {
+
+			EntityManager em = EMF.get().createEntityManager();
+			try {
+				// 1.find out the order
+				CustomerOrder order = em.find(CustomerOrder.class,
+						input.getOrderId());
+				if (order != null
+						&& order.getStatus() == OrderStatus.Submit
+						&& input.getUniqueURL().compareTo(
+								Prefix + "review/" + order.getUniqueURL()) == 0) {
+					log.info("get order: " + order.toString());
+
+					CreditCardDiscountRule rule = em.find(
+							CreditCardDiscountRule.class, order.getCreditCard()
+									.getCreditCardBankId());
+					if (rule != null) {
+						String header = rule.getBankHeader();
+						if (header != null && header.length() > 0) {
+							if (!input.getCardNumber().startsWith(header)
+									|| !input.getCardNumber().endsWith(
+											order.getCreditCard()
+													.getCardNumber())) {
+								log.warn("header " + header +" end "+ order.getCreditCard().getCardNumber()
+										+ " and number inconsist:"
+										+ input.getCardNumber());
+								result.setSucceed(false);
+								result.setUrl(Prefix + "failed/" + CreditCardError);
+								break;
+							}
+						}
 					}
-					// 3. make payment
-					PaymentResult paymentResult = PaymentManager.transaction(
-							order.getCreditCard().getHolder(), input
-									.getCardNumber(), cardType, order
-									.getCreditCard().getValidMonth(), order
-									.getCreditCard().getValidYear(), amount,
-							order.getOrderCode(), order.getCustomerEmail());
-					if (paymentResult.isSucceed()) {
-						// transaction success
-						
-						// 3.send email
-						
-						// 4.update DB
-						em.getTransaction().begin();
-						order.setStatus(OrderStatus.Confirm);
-						order.setPaymentReference(paymentResult.getTransactionId());
-						result.setSucceed(true);
-						result.setUrl(Prefix + "succeed/" + input.getOrderId());
-						em.getTransaction().commit();
+					Calendar calendar = Calendar.getInstance();
+					calendar.add(Calendar.MINUTE, VALID_PERIOD);
+					if (order.getCreateDate().compareTo(calendar.getTime()) >= 0) {
+						// 2. calculate the amount
+						String cardType = "";
+						switch (order.getCreditCard().getCardType()) {
+						case 0:
+							cardType = "VISA";
+							break;
+						case 1:
+							cardType = "MASTER";
+							break;
+						default:
+						}						
+						// 3. make payment
+						PaymentResult paymentResult = PaymentManager
+								.transaction(order.getCreditCard().getHolder(),
+										input.getCardNumber(), cardType, order
+												.getCreditCard()
+												.getValidMonth(),
+										order.getCreditCard().getValidYear(),
+										order.getAmount(), order.getOrderCode(), order
+												.getCustomerEmail());
+						if (paymentResult.isSucceed()) {
+							// transaction success
+
+							// 3.send email
+							
+							// 4.update DB
+							em.getTransaction().begin();
+							order.setStatus(OrderStatus.Confirm);
+							order.setPaymentReference(paymentResult
+									.getTransactionId());
+							result.setSucceed(true);
+							result.setUrl(Prefix + "succeed/"
+									+ input.getOrderId());
+							em.getTransaction().commit();
+						} else {
+							// transaction failed
+							result.setSucceed(false);
+							result.setUrl(Prefix + "failed/" + CreditCardError);
+
+						}
 					} else {
-						// transaction failed
+						log.info("order is out of date");
 						result.setSucceed(false);
-						result.setUrl(Prefix + "failed/"
-								+ CreditCardError);
-
+						result.setUrl(Prefix + "failed/" + OutOfDate);
 					}
-				}
-				else
-				{
-					log.info("order is out of date");
+
+				} else {
+					log.info("can not find order");
 					result.setSucceed(false);
-					result.setUrl(Prefix + "failed/"
-							+ OutOfDate);
+					result.setUrl(Prefix + "failed/" + NotExist);
 				}
-
+			} finally {
+				em.close();
 			}
-			else
-			{
-				log.info("can not find order");
-			}
-		} finally {
-			em.close();
-		}
-
+		} while (false);
 		return result;
 	}
 
@@ -359,6 +434,9 @@ public class OnlineOrderEndpoint {
 			break;
 		case OutOfDate:
 			ErrorString = "交易過期";
+			break;
+		case NotExist:
+			ErrorString = "交易不存在";
 			break;
 		default:
 			break;

@@ -3,6 +3,7 @@
  */
 package com.wangtak.mx.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -353,6 +354,26 @@ public class CustomerOrder {
 				+ receivePromotion + ", creditCard=" + creditCard + ", pickup="
 				+ pickup + ", pickupInfo=" + pickupInfo + ", deliveryInfo="
 				+ deliveryInfo + "]";
+	}
+
+	public String generateOrderCode() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		//PT+date+phone+shop id+2 digital number
+		Date date = null;
+		String storeCode = null;
+		if(this.isPickup())
+		{
+			date = this.pickupInfo.pickupDate;
+			storeCode = this.pickupInfo.storeCode;
+		}
+		else
+		{
+			date = this.deliveryInfo.date;
+			storeCode = "0000";
+		}
+		int randomNumber = (int) (Math.random()*100);
+		
+		return "PT"+dateFormat.format(date)+storeCode+randomNumber;
 	}
 
 }

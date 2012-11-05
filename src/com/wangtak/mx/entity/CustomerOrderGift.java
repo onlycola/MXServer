@@ -19,6 +19,11 @@ public class CustomerOrderGift {
 	String title;
 	int amount;
 	
+	public CustomerOrderGift()
+	{
+		super();
+	}
+	
 	public CustomerOrderGift(String title, int amount)
 	{
 		this.title = title;
