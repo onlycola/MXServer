@@ -8,8 +8,12 @@ package com.wangtak.mx.common;
  *
  */
 public class PaymentResult {
+	public static final int Error_General = 0;
+	public static final int Error_CreditCard = 1;
+	public static final int Error_PaymentGateway = 2;
+	
 	boolean isSucceed;
-	String error;
+	int errorCode;
 	String transactionId;
 	/**
 	 * @return the isSucceed
@@ -23,18 +27,7 @@ public class PaymentResult {
 	public void setSucceed(boolean isSucceed) {
 		this.isSucceed = isSucceed;
 	}
-	/**
-	 * @return the error
-	 */
-	public String getError() {
-		return error;
-	}
-	/**
-	 * @param error the error to set
-	 */
-	public void setError(String error) {
-		this.error = error;
-	}
+	
 	/**
 	 * @return the transactionId
 	 */
@@ -46,5 +39,11 @@ public class PaymentResult {
 	 */
 	public void setTransactionId(String transactionId) {
 		this.transactionId = transactionId;
+	}
+	public int getErrorCode() {
+		return errorCode;
+	}
+	public void setErrorCode(int errorCode) {
+		this.errorCode = errorCode;
 	}
 }
