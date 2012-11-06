@@ -11,6 +11,7 @@ public class PaymentResult {
 	public static final int Error_General = 0;
 	public static final int Error_CreditCard = 1;
 	public static final int Error_PaymentGateway = 2;
+	public static final int Error_AmountIsZero = 3;
 	
 	boolean isSucceed;
 	int errorCode;

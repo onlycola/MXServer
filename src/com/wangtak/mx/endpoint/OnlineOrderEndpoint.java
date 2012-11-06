@@ -13,10 +13,12 @@ import java.util.UUID;
 import javax.annotation.ManagedBean;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.mail.Session;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.servlet.Servlet;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -26,6 +28,7 @@ import javax.ws.rs.Produces;
 
 import org.jboss.logging.Logger;
 
+import com.wangtak.mx.common.LocalizationManager;
 import com.wangtak.mx.common.NotificationManager;
 import com.wangtak.mx.common.PaymentManager;
 import com.wangtak.mx.common.PaymentResult;
@@ -57,24 +60,33 @@ public class OnlineOrderEndpoint {
 
 	// private static final String Prefix =
 	// "http://127.0.0.1:8080/MXServer/api/order/";
-	private static final String Prefix = "http://mx.wangtaktech.com/api/order/";
+	private static final String Prefix = LocalizationManager.GetAPIPref();
 	private static final int VALID_PERIOD = -10; // 10min
 	private static Logger log = Logger.getLogger(OnlineOrderEndpoint.class);
+    
 	
     @Resource(lookup="java:jboss/mail/Default")
     private static Session mailSession;
+    
+    @EJB
+    NotificationManager notificationManager;
+    
+    @EJB
+    PaymentManager paymentManager;
 
 	@GET
 	@Path("/email")
 	@Produces("text/plain")
     public String testEmail()
     {
-    	if(this.mailSession!=null)
-    	{
-    		return "succeed";
-    	}
-    	return "failed";
+		// 4.send email
+		CustomerOrder order = new CustomerOrder();
+		order.setOrderCode("PT1");
+		order.setCustomerEmail("cn.yu.zhao@gmail.com");
+		notificationManager.notifySuccess(order, mailSession);
+		return "succeed";
     }
+	
     
 	@POST
 	@Path("/submit")
@@ -118,14 +130,16 @@ public class OnlineOrderEndpoint {
 					} else {
 						double subTotal = 0.0;
 						if (item.isEnableSpecialPrice()) {
+							log.info("use special price:" + item.toString());
+							i.setUnitPrice(item.getSpecialPrice());
+							subTotal = item.getSpecialPrice() * i.getAmount();
+						} else {
+							log.info("use normal price: "+item.toString());
 							i.setUnitPrice(item.getPrice());
 							subTotal = item.getPrice() * i.getAmount();
 							if (subTotal >= triggerAmount) {
 								subTotal = subTotal * discountRate;
 							}
-						} else {
-							i.setUnitPrice(item.getSpecialPrice());
-							subTotal = item.getSpecialPrice() * i.getAmount();
 						}
 						i.setTotalPrice(subTotal);
 						totalPrice = totalPrice + subTotal;
@@ -191,25 +205,25 @@ public class OnlineOrderEndpoint {
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(2012, 12, 20, 0, 0, 0);
 			Set<CustomerOrderGift> gifts = new HashSet();
-			// Rule 2,3ï¼Œ4ï¼Œ6
+			// Rule 2,3,4,6
 			if (now.before(calendar.getTime())) {
-				gifts.add(new CustomerOrderGift("$25 MXç¾Žé£Ÿç¦®åˆ¸", 1));
+				gifts.add(new CustomerOrderGift(LocalizationManager.GetGift1(), 1));
 
 				gifts.add(new CustomerOrderGift(
-						"çƒ¤é‹¦åŽŸéš»ç¾Žåœ‹ç�«é›žç¦®åˆ¸", 1));
+						LocalizationManager.GetGift2(), 1));
 
 				if (order.isPickup()) {
 					gifts.add(new CustomerOrderGift(
-							"çš‡ç‰Œé‹¦è±¬æ‰’é£¯é€£æ±½æ°´å�·", 1));
+							LocalizationManager.GetGift3(), 1));
 				}
 
 				int s = (int) (totalPrice / 1000);
-				gifts.add(new CustomerOrderGift("å…©ç£…è£�éºµåŒ…å¸ƒä¸�", s));
+				gifts.add(new CustomerOrderGift(LocalizationManager.GetGift4(), s));
 			}
 
 			// Rule 5
 			int t = (int) (totalPrice / 300);
-			gifts.add(new CustomerOrderGift("1.25å…¬å�‡ã€Žå�¯å�£å�¯æ¨‚ã€�", t));
+			gifts.add(new CustomerOrderGift(LocalizationManager.GetGift5(), t));
 
 			order.setGiftList(gifts);
 
@@ -246,8 +260,8 @@ public class OnlineOrderEndpoint {
 	@Path("/testpayment")
 	@Produces("text/plain")
 	public String testPayment() {
-		PaymentManager.transaction("zy", "4444111122223333", "VISA", "07",
-				"2019", 1.00, "PT90909010", "abc@test.com");
+		paymentManager.transaction("zy", "4444111122223333", "VISA", "07",
+				"2019", 1.00, "PT90909010", "cn.yu.zhao@gmail.com");
 		return "succeed";
 	}
 
@@ -255,7 +269,7 @@ public class OnlineOrderEndpoint {
 	@Path("/review/{uniqueURL}")
 	@Produces("text/html ;charset=utf-8")
 	public String getOrderReview(@PathParam("uniqueURL") String unqiueURL) {
-		log.info("getOrderReview" + unqiueURL);
+		log.info("getOrderReview:" + unqiueURL);
 		String response = null;
 		EntityManager em = EMF.get().createEntityManager();
 		try {
@@ -340,7 +354,7 @@ public class OnlineOrderEndpoint {
 						default:
 						}
 						// 3. make payment
-						PaymentResult paymentResult = PaymentManager
+						PaymentResult paymentResult = paymentManager
 								.transaction(order.getCreditCard().getHolder(),
 										input.getCardNumber(), cardType, order
 												.getCreditCard()
@@ -363,7 +377,7 @@ public class OnlineOrderEndpoint {
 							em.getTransaction().commit();
 
 							// 4.send email
-							NotificationManager.notifySuccess(order, mailSession);
+							notificationManager.notifySuccess(order, mailSession);
 
 						} else {
 							// transaction failed

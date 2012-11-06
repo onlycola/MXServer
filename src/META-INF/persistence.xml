@@ -24,6 +24,7 @@
         <class>com.wangtak.mx.entity.DeliveryInfo</class>
         <class>com.wangtak.mx.entity.PickupInfo</class>
         <class>com.wangtak.mx.entity.CustomerOrderGift</class>
+        <class>com.wangtak.mx.entity.EmailRecord</class>
         
         
         <properties>

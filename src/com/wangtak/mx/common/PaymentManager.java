@@ -48,7 +48,7 @@ public class PaymentManager {
 		}
 	}
 
-	public static PaymentResult transaction(String holder, String cardNumber,
+	public PaymentResult transaction(String holder, String cardNumber,
 			String cardType, String validMonth, String validYear,
 			double amountInHKD, String orderCode, String customerEmail) {
 		log.info("transaction holder:" + holder + "cardType:" + cardType
@@ -56,6 +56,13 @@ public class PaymentManager {
 				+ ", amount " + amountInHKD + ", orderCode:" + orderCode
 				+ ", customerEmail:" + customerEmail);
 		PaymentResult paymentResult = new PaymentResult();
+		if(amountInHKD==0.0)
+		{
+			paymentResult.setErrorCode(PaymentResult.Error_AmountIsZero);
+			paymentResult.setSucceed(false);
+			log.warn("payment amount is zero");
+			return paymentResult;
+		}
 		if (eplc.isConfigFileCorrect() == false) {
 			log.error("Config file incorrect");
 			paymentResult.setSucceed(false);

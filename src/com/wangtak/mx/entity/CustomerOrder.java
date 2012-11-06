@@ -371,9 +371,9 @@ public class CustomerOrder {
 			date = this.deliveryInfo.date;
 			storeCode = "0000";
 		}
-		int randomNumber = (int) (Math.random()*100);
+		double randomNumber =  Math.random()*1000;
 		
-		return "PT"+dateFormat.format(date)+storeCode+randomNumber;
+		return "PT"+dateFormat.format(date)+storeCode+(int)randomNumber;
 	}
 
 }

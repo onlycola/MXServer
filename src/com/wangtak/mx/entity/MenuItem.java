@@ -102,4 +102,10 @@ public class MenuItem {
 	public void setPicturURL(String picturURL) {
 		this.picturURL = picturURL;
 	}
+	@Override
+	public String toString() {
+		return "MenuItem [id=" + id + ", sort_order=" + sort_order + ", title="
+				+ title + ", subtitle=" + subtitle + ", picturURL=" + picturURL
+				+ ", menuItemOptionList=" + menuItemOptionList + "]";
+	}
 }
