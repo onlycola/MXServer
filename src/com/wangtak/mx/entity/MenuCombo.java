@@ -32,6 +32,7 @@ public class MenuCombo {
 	double specialPrice; //special price for this combo
 	@Column(nullable = false)
 	boolean isEnable = true; //if the combo is enable, the value is true, otherwise, false
+	String picturURL; //the image url for this menu combo
 	@OneToMany(fetch=FetchType.EAGER,cascade=CascadeType.DETACH)
 	Set<ComboItem> itemList; // all combo items in this combo
 	/**
@@ -129,5 +130,17 @@ public class MenuCombo {
 	 */
 	public void setEnableSpecialPrice(boolean enableSpecialPrice) {
 		this.enableSpecialPrice = enableSpecialPrice;
+	}
+	/**
+	 * @return the picturURL
+	 */
+	public String getPicturURL() {
+		return picturURL;
+	}
+	/**
+	 * @param picturURL the picturURL to set
+	 */
+	public void setPicturURL(String picturURL) {
+		this.picturURL = picturURL;
 	}
 }
