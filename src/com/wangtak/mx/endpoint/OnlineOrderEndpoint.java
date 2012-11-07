@@ -3,12 +3,19 @@
  */
 package com.wangtak.mx.endpoint;
 
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.ManagedBean;
 import javax.annotation.Resource;
@@ -42,6 +49,7 @@ import com.wangtak.mx.entity.CustomerOrder;
 import com.wangtak.mx.entity.CustomerOrderGift;
 import com.wangtak.mx.entity.DeliveryArea;
 import com.wangtak.mx.entity.MenuCombo;
+import com.wangtak.mx.entity.MenuItem;
 import com.wangtak.mx.entity.MenuItemOption;
 import com.wangtak.mx.entity.MenuOrder;
 import com.wangtak.mx.entity.OrderStatus;
@@ -63,6 +71,8 @@ public class OnlineOrderEndpoint {
 	private static final String Prefix = LocalizationManager.GetAPIPref();
 	private static final int VALID_PERIOD = -10; // 10min
 	private static Logger log = Logger.getLogger(OnlineOrderEndpoint.class);
+	private static Pattern p = Pattern.compile("\\d{4}");
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("MMM/dd/yyyy");
     
 	
     @Resource(lookup="java:jboss/mail/Default")
@@ -98,6 +108,14 @@ public class OnlineOrderEndpoint {
 		SubmitOrderResponse response = new SubmitOrderResponse();
 		// 2.generate url
 		String uniqueURL = UUID.randomUUID().toString();
+		Matcher m = p.matcher(order.getCreditCard().getCardNumber());
+		if(!m.matches())
+		{
+			log.warn("credit card is not the 4 digital number");
+			response.setError("credit card must be the last 4 digital number");
+			response.setOrderId(0);
+			return response;
+		}
 		EntityManager em = EMF.get().createEntityManager();
 		try {
 			// 1.calculate order
@@ -113,14 +131,18 @@ public class OnlineOrderEndpoint {
 				log.info("find the discount rule: " + rule);
 				triggerAmount = rule.getTriggerAmount();
 				discountRate = rule.getDiscountRate();
+				order.getCreditCard().setCreditCardBank(rule.getCardtitle());
 			}
 			double totalPrice = 0.0;
 			// go through all menu item in order
 			if (order.getMenuOrderList() != null) {
 				for (MenuOrder i : order.getMenuOrderList()) {
-					MenuItemOption item = em.find(MenuItemOption.class,
+					MenuItemOption itemOption = em.find(MenuItemOption.class,
 							i.getMenuOptionId());
-					if (item == null) {
+					MenuItem item = em.find(MenuItem.class,
+							i.getMenuItemId());
+					//valid the input data
+					if (itemOption == null||item==null||!item.getMenuItemOptionList().contains(itemOption)) {
 						response.setError("Menu is updated.");
 						response.setOrderId(0);
 						hasError = true;
@@ -129,20 +151,24 @@ public class OnlineOrderEndpoint {
 						break;
 					} else {
 						double subTotal = 0.0;
-						if (item.isEnableSpecialPrice()) {
-							log.info("use special price:" + item.toString());
-							i.setUnitPrice(item.getSpecialPrice());
-							subTotal = item.getSpecialPrice() * i.getAmount();
-						} else {
-							log.info("use normal price: "+item.toString());
-							i.setUnitPrice(item.getPrice());
-							subTotal = item.getPrice() * i.getAmount();
-							if (subTotal >= triggerAmount) {
-								subTotal = subTotal * discountRate;
+						if(i.getAmount()>0)
+						{
+							i.setTitleForDisplay(item.getTitle()+" ("+itemOption.getTitle()+")");
+							if (itemOption.isEnableSpecialPrice()) {
+								log.info("use special price:" + itemOption.toString());
+								i.setUnitPrice(itemOption.getSpecialPrice());
+								subTotal = itemOption.getSpecialPrice() * i.getAmount();
+							} else {
+								log.info("use normal price: "+itemOption.toString());
+								i.setUnitPrice(itemOption.getPrice());
+								subTotal = itemOption.getPrice() * i.getAmount();
+								if (subTotal >= triggerAmount) {
+									subTotal = subTotal * discountRate;
+								}
 							}
+							i.setTotalPrice(subTotal);
+							totalPrice = totalPrice + subTotal;
 						}
-						i.setTotalPrice(subTotal);
-						totalPrice = totalPrice + subTotal;
 					}
 				}
 			}
@@ -164,18 +190,23 @@ public class OnlineOrderEndpoint {
 						break;
 					} else {
 						double subTotal = 0.0;
-						if (item.isEnableSpecialPrice()) {
-							j.setUnitPrice(item.getPrice());
-							subTotal = item.getPrice() * j.getAmount();
-							if (subTotal >= triggerAmount) {
-								subTotal = subTotal * discountRate;
+						if(j.getAmount()>0)
+						{
+							j.setTitleForDisplay(item.getTitle());
+							if (item.isEnableSpecialPrice()) {
+								j.setUnitPrice(item.getSpecialPrice());
+								subTotal = item.getSpecialPrice() * j.getAmount();
+								
+							} else {
+								j.setUnitPrice(item.getPrice());
+								subTotal = item.getPrice() * j.getAmount();
+								if (subTotal >= triggerAmount) {
+									subTotal = subTotal * discountRate;
+								}
 							}
-						} else {
-							j.setUnitPrice(item.getSpecialPrice());
-							subTotal = item.getSpecialPrice() * j.getAmount();
+							j.setTotalPrice(subTotal);
+							totalPrice = totalPrice + subTotal;
 						}
-						j.setTotalPrice(subTotal);
-						totalPrice = totalPrice + subTotal;
 					}
 				}
 			}
@@ -218,12 +249,18 @@ public class OnlineOrderEndpoint {
 				}
 
 				int s = (int) (totalPrice / 1000);
-				gifts.add(new CustomerOrderGift(LocalizationManager.GetGift4(), s));
+				if(s>0)
+				{
+					gifts.add(new CustomerOrderGift(LocalizationManager.GetGift4(), s));
+				}
 			}
 
 			// Rule 5
 			int t = (int) (totalPrice / 300);
-			gifts.add(new CustomerOrderGift(LocalizationManager.GetGift5(), t));
+			if(t>0)
+			{
+				gifts.add(new CustomerOrderGift(LocalizationManager.GetGift5(), t));
+			}
 
 			order.setGiftList(gifts);
 
@@ -285,8 +322,117 @@ public class OnlineOrderEndpoint {
 			query.setParameter("date", calendar.getTime());
 			List<CustomerOrder> orders = query.getResultList();
 			if (orders.size() > 0) {
-				response = "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><body><h1>Order Content:</h1>"
-						+ orders.get(0).toString() + "</body></html>";
+				String orderContent = "<h3>訂單內容:</h3>";
+				orderContent += "<table border=\"1\"><tr> <th>您所選擇的產品</th> <th>數量</th> <th>金額 </th></tr>";
+				CustomerOrder order = orders.get(0);
+				//Menu item
+				List<MenuOrder> itemList = new ArrayList(order.getMenuOrderList());
+				Collections.sort(itemList, new Comparator<MenuOrder>(){
+
+					@Override
+					public int compare(MenuOrder o1, MenuOrder o2) {
+						return o2.getId()-o1.getId();
+					}
+				});
+				for(MenuOrder o:itemList)
+				{
+					if(o.getAmount()>0)
+					{
+						orderContent +="<tr><td>"+o.getTitleForDisplay()+"</td><td>x"+o.getAmount()+"</td><td>"+NumberFormat.getCurrencyInstance().format(o.getTotalPrice())+"</td></tr>";
+					}
+				}
+				
+				//Combo
+				List<ComboOrder> comboList = new ArrayList(order.getComboOrderList());
+				Collections.sort(comboList, new Comparator<ComboOrder>(){
+
+					@Override
+					public int compare(ComboOrder o1, ComboOrder o2) {
+						return o2.getComboId()-o1.getComboId();
+					}
+				});
+				for(ComboOrder o:comboList)
+				{
+					if(o.getAmount()>0)
+					{
+						orderContent +="<tr><td>"+o.getTitleForDisplay()+"</td><td>x"+o.getAmount()+"</td><td>"+NumberFormat.getCurrencyInstance().format(o.getTotalPrice())+"</td></tr>";
+					}
+
+				}
+				
+				
+				//orderContent += "<table border=\"1\">";
+				if(order.isPickup()||order.getAmount()<=0.0)
+				{
+					double amount = 0;
+					if(order.getAmount()>=0)
+					{
+						amount = order.getAmount();
+					}
+					orderContent += "<tr><td></td><td><b>總計</b></td><td>"+NumberFormat.getCurrencyInstance().format(amount)+"</td></tr>";
+				}
+				else
+				{
+					orderContent += "<tr><td></td><td>小計</td><td>"+NumberFormat.getCurrencyInstance().format(order.getAmount())+"</td></tr>";
+					orderContent +="<tr><td>送貨費</td><td></td><td>"+NumberFormat.getCurrencyInstance().format(order.getDeliveryFee())+"</td></tr>";
+					orderContent += "<tr><td></td><td><b>總計</b></td><td>"+NumberFormat.getCurrencyInstance().format(order.getAmount()+order.getDeliveryFee())+"</td></tr>";
+				}
+				//orderContent += "</table>";
+				//orderContent += "<br/>";
+				
+				//Gifts
+				List<CustomerOrderGift> gifts = new ArrayList<CustomerOrderGift>(order.getGiftList());
+				Collections.sort(gifts, new Comparator<CustomerOrderGift>(){
+
+					@Override
+					public int compare(CustomerOrderGift o1, CustomerOrderGift o2) {
+						return o2.getId() - o1.getId();
+					}
+					
+				});
+				
+				//orderContent += "<table border=\"1\">";
+				for(CustomerOrderGift gift: gifts)
+				{
+					orderContent += "<tr><td>"+gift.getTitle()+"</td><td>x"+gift.getAmount()+"</td><td></td></tr>";
+					
+				}
+				orderContent += "</table>";
+				
+				orderContent +="<br/>";
+				
+				orderContent +="<h3>客戶信息:</h3>";
+				orderContent += "<table border=\"1\">";
+				orderContent +="<tr><td>客戶姓名：</td><td>"+order.getCustomerName()+"</td></tr>";
+				orderContent +="<tr><td>客戶電話：</td><td>"+order.getCustomerPhoneNumber()+"</td></tr>";
+				orderContent +="<tr><td>客戶電郵：</td><td>"+order.getCustomerEmail()+"</td></tr>";
+				orderContent +="<tr><td>付款方式：</td><td>信用卡</td></tr>";
+				orderContent +="<tr><td>信用卡類別：</td><td>"+order.getCreditCard().getCardTypeString()+"</td></tr>";
+				orderContent +="<tr><td>信用卡銀行：</td><td>"+order.getCreditCard().getCreditCardBank()+"</td></tr>";
+				orderContent +="<tr><td>信用卡號碼：</td><td>xxxx xxxx xxxx "+order.getCreditCard().getCardNumber()+"</td></tr>";
+				orderContent +="<tr><td>取貨方式：</td>";
+				if(order.isPickup())
+				{
+					orderContent+="<td>分店取貨</td></tr>";
+					orderContent +="<tr><td>取貨日期：</td><td>"+dateFormat.format(order.getPickupInfo().getPickupDate())+"</td></tr>";
+					orderContent +="<tr><td>取貨時段：</td><td>"+order.getPickupInfo().getPickupPeriod()+"</td></tr>";
+					orderContent +="<tr><td>分店地址：</td><td>"+order.getPickupInfo().getStoreAddress()+"</td></tr>";
+					orderContent +="<tr><td>分店電話：</td><td>"+order.getPickupInfo().getStorePhonenumber()+"</td></tr>";
+					
+				}
+				else
+				{
+					orderContent+="<td>送貨服務</td></tr>";
+					orderContent +="<tr><td>送貨日期：</td><td>"+dateFormat.format(order.getDeliveryInfo().getDate())+"</td></tr>";
+					orderContent +="<tr><td>送貨時段：</td><td>"+order.getDeliveryInfo().getDeliveryPeriod()+"</td></tr>";
+					orderContent +="<tr><td>送貨地址：</td><td>"+order.getDeliveryInfo().getDeliveryAddress()+"</td></tr>";
+					orderContent +="<tr><td>收貨人：</td><td>"+order.getDeliveryInfo().getName()+"</td></tr>";
+					orderContent +="<tr><td>收貨人電話：</td><td>"+order.getDeliveryInfo().getPhoneNumber()+"</td></tr>";
+				}								
+				orderContent += "</table>";
+				
+				response = "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><body>"
+						+ orderContent+ "</body></html>";
 			} else {
 				response = "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><body><h1>Not Found</h1></body></html>";
 			}
@@ -342,21 +488,11 @@ public class OnlineOrderEndpoint {
 					Calendar calendar = Calendar.getInstance();
 					calendar.add(Calendar.MINUTE, VALID_PERIOD);
 					if (order.getCreateDate().compareTo(calendar.getTime()) >= 0) {
-						// 2. calculate the amount
-						String cardType = "";
-						switch (order.getCreditCard().getCardType()) {
-						case 0:
-							cardType = "VISA";
-							break;
-						case 1:
-							cardType = "MASTER";
-							break;
-						default:
-						}
+						
 						// 3. make payment
 						PaymentResult paymentResult = paymentManager
 								.transaction(order.getCreditCard().getHolder(),
-										input.getCardNumber(), cardType, order
+										input.getCardNumber(), order.getCreditCard().getCardTypeString(), order
 												.getCreditCard()
 												.getValidMonth(),
 										order.getCreditCard().getValidYear(),
@@ -426,21 +562,23 @@ public class OnlineOrderEndpoint {
 			{
 				if(order.getStatus()==OrderStatus.Confirm)
 				{
-					response = "<html><body><h1>Order Content:</h1>"+order.toString()+"</body></html>";
+					response += "<h3>您已訂購成功，訂單號:"+order.getOrderCode()+"</h3>";
+					response += "您將在15分鐘內收到訂單郵件,如需修改或取消訂單請撥打熱線2101-1850";
+					response += "<br>謝謝惠顧！";
 				}
 				else
 				{
-					response = "<html><body><h1>Incomplete Order</h1></body></html>";
+					response += "<h3>未完成訂單</h3>";
 				}
 			}
 			else
 			{
-				response = "<html><body><h1>Not Found Order</h1></body></html>";
+				response += "<h3>未找到訂單</h3>";
 			}
 		} finally {
 			em.close();
 		}
-		return response;
+		return "<html<head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><body>"+response+"</body></html>";
 	}
 
 	@GET

@@ -22,6 +22,7 @@ public class MenuOrder
 	int amount;
 	double unitPrice;
 	double totalPrice;
+	String titleForDisplay;
 	/**
 	 * @return the menuItemId
 	 */
@@ -81,6 +82,30 @@ public class MenuOrder
 	 */
 	public void setTotalPrice(double totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+	/**
+	 * @return the titleForDisplay
+	 */
+	public String getTitleForDisplay() {
+		return titleForDisplay;
+	}
+	/**
+	 * @param titleForDisplay the titleForDisplay to set
+	 */
+	public void setTitleForDisplay(String titleForDisplay) {
+		this.titleForDisplay = titleForDisplay;
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

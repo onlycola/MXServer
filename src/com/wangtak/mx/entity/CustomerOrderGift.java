@@ -54,6 +54,20 @@ public class CustomerOrderGift {
 	public void setAmount(int amount) {
 		this.amount = amount;
 	}
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

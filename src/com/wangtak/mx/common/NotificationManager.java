@@ -71,7 +71,7 @@ public class NotificationManager {
 
 				m.setSentDate(new java.util.Date());
 
-				m.setContent(order.toString(), "text/plain; charset=UTF-8");
+				m.setContent(order.generateEmailContent(), order.generateEmailContentType());
 
 				Transport.send(m);
 				record.setSucceed(true);

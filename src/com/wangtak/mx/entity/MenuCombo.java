@@ -33,6 +33,7 @@ public class MenuCombo {
 	@Column(nullable = false)
 	boolean isEnable = true; //if the combo is enable, the value is true, otherwise, false
 	String picturURL; //the image url for this menu combo
+	String title;
 	@OneToMany(fetch=FetchType.EAGER,cascade=CascadeType.DETACH)
 	Set<ComboItem> itemList; // all combo items in this combo
 	/**
@@ -142,5 +143,17 @@ public class MenuCombo {
 	 */
 	public void setPicturURL(String picturURL) {
 		this.picturURL = picturURL;
+	}
+	/**
+	 * @return the title
+	 */
+	public String getTitle() {
+		return title;
+	}
+	/**
+	 * @param title the title to set
+	 */
+	public void setTitle(String title) {
+		this.title = title;
 	}
 }

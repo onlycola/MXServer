@@ -21,6 +21,7 @@ public class ComboOrder
 	int amount;
 	double unitPrice;
 	double totalPrice;
+	String titleForDisplay;
 	/**
 	 * @return the comboId
 	 */
@@ -68,6 +69,18 @@ public class ComboOrder
 	 */
 	public void setTotalPrice(double totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+	/**
+	 * @return the titleForDisplay
+	 */
+	public String getTitleForDisplay() {
+		return titleForDisplay;
+	}
+	/**
+	 * @param titleForDisplay the titleForDisplay to set
+	 */
+	public void setTitleForDisplay(String titleForDisplay) {
+		this.titleForDisplay = titleForDisplay;
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

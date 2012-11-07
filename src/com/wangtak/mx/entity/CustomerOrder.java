@@ -3,8 +3,13 @@
  */
 package com.wangtak.mx.entity;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -24,6 +29,8 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class CustomerOrder {
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("MMM/dd/yyyy");
+	
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	int id;
 	@Column(unique = true)
@@ -374,6 +381,128 @@ public class CustomerOrder {
 		double randomNumber =  Math.random()*1000;
 		
 		return "PT"+dateFormat.format(date)+storeCode+(int)randomNumber;
+	}
+
+	public String generateEmailContentType() {
+		return "text/html; charset=UTF-8";
+	}
+
+	public String generateEmailContent() {
+		String orderContent = "<h3>訂單內容:</h3>";
+		orderContent += "<table border=\"1\"><tr> <th>您所選擇的產品</th> <th>數量</th> <th>金額 </th></tr>";
+		//Menu item
+		List<MenuOrder> itemList = new ArrayList(this.getMenuOrderList());
+		Collections.sort(itemList, new Comparator<MenuOrder>(){
+
+			@Override
+			public int compare(MenuOrder o1, MenuOrder o2) {
+				return o2.getId()-o1.getId();
+			}
+		});
+		for(MenuOrder o:itemList)
+		{
+			if(o.getAmount()>0)
+			{
+				orderContent +="<tr><td>"+o.getTitleForDisplay()+"</td><td>x"+o.getAmount()+"</td><td>"+NumberFormat.getCurrencyInstance().format(o.getTotalPrice())+"</td></tr>";
+			}
+		}
+		
+		//Combo
+		List<ComboOrder> comboList = new ArrayList(this.getComboOrderList());
+		Collections.sort(comboList, new Comparator<ComboOrder>(){
+
+			@Override
+			public int compare(ComboOrder o1, ComboOrder o2) {
+				return o2.getComboId()-o1.getComboId();
+			}
+		});
+		for(ComboOrder o:comboList)
+		{
+			if(o.getAmount()>0)
+			{
+				orderContent +="<tr><td>"+o.getTitleForDisplay()+"</td><td>x"+o.getAmount()+"</td><td>"+NumberFormat.getCurrencyInstance().format(o.getTotalPrice())+"</td></tr>";
+			}
+
+		}
+		
+		
+		//orderContent += "<table border=\"1\">";
+		if(this.isPickup()||this.getAmount()<=0.0)
+		{
+			double amount = 0;
+			if(this.getAmount()>=0)
+			{
+				amount = this.getAmount();
+			}
+			orderContent += "<tr><td></td><td><b>總計</b></td><td>"+NumberFormat.getCurrencyInstance().format(amount)+"</td></tr>";
+		}
+		else
+		{
+			orderContent += "<tr><td></td><td>小計</td><td>"+NumberFormat.getCurrencyInstance().format(this.getAmount())+"</td></tr>";
+			orderContent +="<tr><td>送貨費</td><td></td><td>"+NumberFormat.getCurrencyInstance().format(this.getDeliveryFee())+"</td></tr>";
+			orderContent += "<tr><td></td><td><b>總計</b></td><td>"+NumberFormat.getCurrencyInstance().format(this.getAmount()+this.getDeliveryFee())+"</td></tr>";
+		}
+		//orderContent += "</table>";
+		//orderContent += "<br/>";
+		
+		//Gifts
+		List<CustomerOrderGift> gifts = new ArrayList<CustomerOrderGift>(this.getGiftList());
+		Collections.sort(gifts, new Comparator<CustomerOrderGift>(){
+
+			@Override
+			public int compare(CustomerOrderGift o1, CustomerOrderGift o2) {
+				return o2.getId() - o1.getId();
+			}
+			
+		});
+		
+		//orderContent += "<table border=\"1\">";
+		for(CustomerOrderGift gift: gifts)
+		{
+			orderContent += "<tr><td>"+gift.getTitle()+"</td><td>x"+gift.getAmount()+"</td><td></td></tr>";
+			
+		}
+		orderContent += "</table>";
+		
+		orderContent +="<br/>";
+		
+		orderContent +="<h3>客戶信息:</h3>";
+		orderContent += "<table border=\"1\">";
+		orderContent +="<tr><td>客戶姓名：</td><td>"+this.getCustomerName()+"</td></tr>";
+		orderContent +="<tr><td>客戶電話：</td><td>"+this.getCustomerPhoneNumber()+"</td></tr>";
+		orderContent +="<tr><td>客戶電郵：</td><td>"+this.getCustomerEmail()+"</td></tr>";
+		orderContent +="<tr><td>付款方式：</td><td>信用卡</td></tr>";
+		orderContent +="<tr><td>信用卡類別：</td><td>"+this.getCreditCard().getCardTypeString()+"</td></tr>";
+		orderContent +="<tr><td>信用卡銀行：</td><td>"+this.getCreditCard().getCreditCardBank()+"</td></tr>";
+		orderContent +="<tr><td>信用卡號碼：</td><td>xxxx xxxx xxxx "+this.getCreditCard().getCardNumber()+"</td></tr>";
+		orderContent +="<tr><td>取貨方式：</td>";
+		if(this.isPickup())
+		{
+			orderContent+="<td>分店取貨</td></tr>";
+			orderContent +="<tr><td>取貨日期：</td><td>"+dateFormat.format(this.getPickupInfo().getPickupDate())+"</td></tr>";
+			orderContent +="<tr><td>取貨時段：</td><td>"+this.getPickupInfo().getPickupPeriod()+"</td></tr>";
+			orderContent +="<tr><td>分店地址：</td><td>"+this.getPickupInfo().getStoreAddress()+"</td></tr>";
+			orderContent +="<tr><td>分店電話：</td><td>"+this.getPickupInfo().getStorePhonenumber()+"</td></tr>";
+			
+		}
+		else
+		{
+			orderContent+="<td>送貨服務</td></tr>";
+			orderContent +="<tr><td>送貨日期：</td><td>"+dateFormat.format(this.getDeliveryInfo().getDate())+"</td></tr>";
+			orderContent +="<tr><td>送貨時段：</td><td>"+this.getDeliveryInfo().getDeliveryPeriod()+"</td></tr>";
+			orderContent +="<tr><td>送貨地址：</td><td>"+this.getDeliveryInfo().getDeliveryAddress()+"</td></tr>";
+			orderContent +="<tr><td>收貨人：</td><td>"+this.getDeliveryInfo().getName()+"</td></tr>";
+			orderContent +="<tr><td>收貨人電話：</td><td>"+this.getDeliveryInfo().getPhoneNumber()+"</td></tr>";
+		}								
+		orderContent += "</table>";
+		
+		orderContent += "<br>";
+		orderContent += "謝謝惠顧！";
+		orderContent += "<br>";
+		orderContent += "如需修改或取消訂單請撥打熱線2101-1850";
+		
+		return "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><body>"
+				+ orderContent+ "</body></html>";
 	}
 
 }

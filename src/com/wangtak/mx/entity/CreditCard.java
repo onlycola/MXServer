@@ -20,6 +20,7 @@ public class CreditCard {
 	String cardNumber; //only last 4 digital
 	int cardType;//0 for visa, 1 for master
 	int creditCardBankId; // consistent to CrediCardDsicountRuleId
+	String creditCardBank;
 	String validMonth;
 	String validYear;
 	/**
@@ -99,9 +100,45 @@ public class CreditCard {
 	 */
 	@Override
 	public String toString() {
-		return "CreditCard [holder=" + holder + ", cardNumber=" + cardNumber
-				+ ", cardType=" + cardType + ", creditCardBankId="
-				+ creditCardBankId + ", validMonth=" + validMonth
-				+ ", validYear=" + validYear + "]";
+		return "CreditCard [id=" + id + ", holder=" + holder + ", cardNumber="
+				+ cardNumber + ", cardType=" + cardType + ", creditCardBankId="
+				+ creditCardBankId + ", creditCardBank=" + creditCardBank
+				+ ", validMonth=" + validMonth + ", validYear=" + validYear
+				+ "]";
+	}
+	public String getCardTypeString() {
+		switch(this.cardType)
+		{
+		case 0:
+			return "VISA";
+		case 1:
+			return "MASTER";
+		default:
+			return "";
+		}
+	}
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+	/**
+	 * @return the creditCardBank
+	 */
+	public String getCreditCardBank() {
+		return creditCardBank;
+	}
+	/**
+	 * @param creditCardBank the creditCardBank to set
+	 */
+	public void setCreditCardBank(String creditCardBank) {
+		this.creditCardBank = creditCardBank;
 	}
 }
