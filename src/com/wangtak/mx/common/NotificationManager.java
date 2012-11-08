@@ -67,7 +67,7 @@ public class NotificationManager {
 				// m.setFrom(from);
 				m.setRecipients(Message.RecipientType.TO, to);
 
-				m.setSubject("order reception " + order.getOrderCode());
+				m.setSubject(order.generateEmailSubject());
 
 				m.setSentDate(new java.util.Date());
 

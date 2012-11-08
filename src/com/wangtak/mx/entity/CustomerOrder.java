@@ -505,4 +505,8 @@ public class CustomerOrder {
 				+ orderContent+ "</body></html>";
 	}
 
+	public String generateEmailSubject() {
+		return "美心美食派對訂單" + this.getOrderCode();
+	}
+
 }
