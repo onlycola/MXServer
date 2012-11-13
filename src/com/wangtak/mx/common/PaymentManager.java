@@ -92,7 +92,7 @@ public class PaymentManager {
 				String successURL = new String("http://");
 				String failURL = new String("http://");
 				String cancelURL = new String("http://");
-				String payerEmail = customerEmail;
+				String payerEmail = new String("");
 				String payFor = new String("maxims mx party menu");
 				/* Generate the URL with the Digital Order (DO) encrypted */
 				String EncDoURL = null;

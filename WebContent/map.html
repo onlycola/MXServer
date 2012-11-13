@@ -1,0 +1,411 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+
+<title>無標題文件</title>
+
+
+<script type="text/javascript" src="js/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="js/quickpager.jquery.js"></script>
+
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
+<script type="text/javascript">
+
+
+
+
+
+
+
+function initialize(){	
+   //call a function to separate the coordinate with ,
+	
+   var latlng = new google.maps.LatLng(22.286687,114.136785);
+   var myOptions = {
+     zoom: 8,
+     center: latlng,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+   };
+   var map = new google.maps.Map(document.getElementById("map_canvas"),
+       myOptions);
+}
+
+
+function map_coor_change(coor_1,coor_2){
+  
+   var latlng = new google.maps.LatLng(coor_1,coor_2);
+   var myOptions = {
+     zoom: 8,
+     center: latlng,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+   };
+   var map = new google.maps.Map(document.getElementById("map_canvas"),
+       myOptions);
+}
+
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+
+
+$(document).ready(function() {
+$("table.pageme tbody").quickPager( {
+	pageSize: 5,
+	currentPage: 1,
+	holder: ".pager"
+	});
+});
+$("ul.pageme").quickPager();
+</script>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body onload="initialize()">
+<div id="wrapper">
+	<div id="header">
+    	<div id="inner_header">
+            <div id="logo">
+                <a href="main.html"><img src="images/common/logo.gif" /></a>
+            </div>
+            <div id="hotline">
+            
+            </div>
+        </div>
+    </div>
+    <div id="middle_wrapper">
+        <div id="nav">
+            <ul>
+                <li><a href="main.html">最新推廣</a></li>
+                <li><a href="snack.html">網上訂購</a></li>
+                <li><a href="enquiry.html">查詢訂單</a></li>
+                <li><a href="map.html" class="selected">分店地圖</a></li>
+            </ul>
+        </div>
+        <div id="content">
+            <div id="inner_wrapper">
+            
+            	<div class="map_upper_content">
+                	<img src="images/others/chair.png" class="f_left"/>
+                    <p class="f_right" style="width:415px;font-size:12px;padding:10px;margin:25px 0px">香港美心集團為香港最大之飲食集團, 于香港經營中菜, 西菜, 日菜, 東南亞菜, 快餐,西餅, 星巴克咖啡店, 元氣壽司, 東海堂, 以及提供為多間本地工商,教育等机构及医院提供机构餐飲服務. 該公司由祖藉廣東台山商人兄弟伍舜德及伍沾德創立於1956年,目前牛奶國際有限公司持有美心50%股份,但決策權仍由伍氏家族擁有.</p>
+                </div>
+                
+                <div class="map_bottom_content">
+                	<div class="location_left_wrapper f_left">
+                    	<ul id="location_nav">
+                        	<li><a href="map.html" class="selected">香港</a></li>
+                            <li><a href="map_kl.html">九龍</a></li>
+                            <li><a href="map_nw.html">新界及離島</a></li>
+                        </ul>
+                        
+                        <div style="clear:both"></div>
+                            <!--<table border="0" cellpadding="0" cellspacing="0" id="testTable">
+                            	
+                                <tr><td width="107">分店</td><td width="240">地址</td><td>電話</td></tr>
+                             
+                                <tr>
+                                	<td><a href="#" style="text-decoration:none;color:#000;" onclick="initialize();">{title_tc}</a></td>
+                                    <td>{address_tc}</td>
+                                    <td>{phone}</td>
+                                </tr>
+                                
+                               
+                            </table>-->
+                          
+                            <table border="0" cellpadding="0" cellspacing="0" class="pageme">
+                            <thead>
+                            <tr class="row_header"><td width="73">分店</td><td width="280">地址</td><td>電話</td></tr>
+                            </thead>
+                            <tbody>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.286687,114.136785)">
+                            創業
+                            </a>
+                            </td><td>
+                            香港西營盤德輔道西 402-404 號創業中心地下 G76-G78 及 G84-G88 號舖
+                            </td><td>
+                            2857 2910
+                            </td></tr>	  	  
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.282393,114.127376)">
+                            卑路乍街
+                            </a>
+                            </td><td>
+                            香港西環卑路乍街116-122號 一樓A號舖
+                            </td><td>
+                            2819 1196
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.285959,114.15223)">
+                            永樂街
+                            </a>
+                            </td><td>
+                            香港上環永樂街71-77號嘉滙商業中心地下G01號舖
+                            </td><td>
+                            2851 4251
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.287962,114.151766)">
+                            信德中心
+                            </a>
+                            </td><td>
+                            香港上環干諾道中168-200號信德中心二樓268號舖
+                            </td><td>
+                            2857 6566
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.284684,114.158189)">
+                            香港站
+                            </a>
+                            </td><td>
+                            港鐵香港站HOK 61號舖
+                            </td><td>
+                            2530 1225
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.282363,114.16169)">
+                            中環大會堂
+                            </a>
+                            </td><td>
+                            香港中環大會堂高座地下
+                            </td><td>
+                            2521 1071
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.281045,114.162545)">
+                            和記大廈
+                            </a>
+                            </td><td>
+                            香港中環和記大廈一樓103號舖
+                            </td><td>
+                            2869 4450
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.282083,114.157787)">
+                            中環站
+                            </a>
+                            </td><td>
+                            港鐵中環站 CEN K1 – K3號舖
+                            </td><td>
+                            2537 4745
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.286101,114.154072)">
+                            大新行
+                            </a>
+                            </td><td>
+                            香港中環干諾道90號大新行地下
+                            </td><td>
+                            2543 7877
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.283428,114.157379)">
+                            中華總商會大廈
+                            </a>
+                            </td><td>
+                            香港中環干諾道中24至25號中華總商會大廈地下及一樓
+                            </td><td>
+                            2140 6689
+                            </td></tr>
+                            
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.276774,114.180836)">
+                            堅拿道西
+                            </a>
+                            </td><td>
+                            香港灣仔堅拿道西26-30號；禮頓道1-7號；摩理臣山道41-47 號愉景樓地下後部份 A 舖位
+                            </td><td>
+                            2838 5075
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.278824,114.180302)">
+                            軒尼詩
+                            </a>
+                            </td><td>
+                            香港灣仔軒尼詩道 398-400 號地下
+                            </td><td>
+                            2893 7867
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.280673,114.182506)">
+                            波斯富街
+                            </a>
+                            </td><td>
+                            香港銅鑼灣波斯街24-30號寶漢大廈一樓全層
+                            </td><td>
+                            2838 6173
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.288017,114.192211)">
+                            友邦
+                            </a>
+                            </td><td>
+                            香港北角電氣道183號友邦廣場地下9-13號舖
+                            </td><td>
+                            2219 7223
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.29035,114.194309)">
+                            城市中心
+                            </a>
+                            </td><td>
+                            香港電氣道233號城市中心商場一樓47號舖部份及59A號舖
+                            </td><td>
+                            2566 4556
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.28761,114.21041)">
+                            鰂魚涌
+                            </a>
+                            </td><td>
+                            香港鰂魚涌英皇道971號英皇大樓一樓部份
+                            </td><td>
+                            2561 5760
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.291261,114.208066)">
+                            樂基中心
+                            </a>
+                            </td><td>
+                            香港鰂魚涌英皇道734 號樂基中心地下2A 號鋪
+                            </td><td>
+                            2679 8229
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.284902,114.215863)">
+                            康怡
+                            </a>
+                            </td><td>
+                            香港鰂魚涌康怡商場北翼地下
+                            </td><td>
+                            2885 5095
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.276548,114.240046)">
+                            杏花邨
+                            </a>
+                            </td><td>
+                            香港柴灣杏花邨杏花新城東翼一樓112A舖
+                            </td><td>
+                            2558 8541
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.263574,114.236706)">
+                            新翠
+                            </a>
+                            </td><td>
+                            香港柴灣新翠商場一樓
+                            </td><td>
+                            2897 7513
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.266056,114.251182)">
+                            藍灣
+                            </a>
+                            </td><td>
+                            香港小西灣小西灣道28號藍灣廣場地下12及15號舖
+                            </td><td>
+                            2248 5370
+                            </td></tr>
+                            
+                            <tr><td>
+                            <a href="#" onclick="javascript:map_coor_change(22.248617,114.154907)">
+                            香港仔
+                            </a>
+                            </td><td>
+                            香港仔成都道20-28號添喜大廈1樓3號
+                            </td><td>
+                            2580 5133
+                            </td></tr>
+                            
+                            
+                              </tbody>
+                            </table>
+                        	<div class="pager"></div>	
+                          
+                        
+                        	
+                           <!-- <table border="0" cellpadding="0" cellspacing="0">
+                                <tr><td width="107">分店</td><td width="240">地址</td><td>電話</td></tr>
+                                <tr><td>創業</td><td>香港西營盤慫輔道西402-404號創業中心地下G76-G78及G84-G88號鋪</td><td>2101-1850</td></tr>
+                                <tr><td>卑路乍街</td><td>香港西環卑路乍街116-122號一樓A號舖</td><td>2101-1850</td></tr>
+                                <tr><td>永樂街</td><td>香港上環永樂街71-77號嘉匯商業中心地下G01號舖</td><td>2101-1850</td></tr>
+                                <tr><td>信德中心</td><td>香港上環干諾道168-200號信德中心二樓268號舖</td><td>2101-1850</td></tr>
+                                <tr><td>香港站</td><td>港鐵香港站HOK 61號舖</td><td>2101-1850</td></tr>
+                                <tr><td>中環大會堂</td><td>香港中環大會堂高座地下</td><td>2101-1850</td></tr>
+                            </table>-->
+                            
+                            
+                       <!-- <ul class="list_nav">
+                        	<li><a href="#" class="selected">1</a></li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>
+                        </ul>-->
+                        
+                    </div>
+                    <div id="map_canvas" class="f_right">
+                    		
+                    </div>
+                    
+                </div>
+            
+            	
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            	
+            </div>
+            
+        </div>
+    </div>
+    <div id="footer">
+            	<div class="bottom_nav">
+                	<a href="#" class="f_left" style="margin-left:24px">私隱政策</a><a href="rules_and_regulation.html" class="f_left">使用條款</a>
+                    <a href="http://www.facebook.com"><img src="images/common/facebook.gif" alt="facebook" title="facebook" class="f_right" style="margin-top:2px"/></a>
+                </div>
+                <div id="logo_wrapper">
+                    <a href="#"><img src="images/common/internet.gif" /></a>
+                    <a href="#"><img src="images/common/visa.gif" /></a>
+                    <a href="#"><img src="images/common/master_card.gif" /></a>
+                    <a href="#"><img src="images/common/norton.gif" /></a>
+                </div>
+            </div>
+</div>
+</body>
+</html>

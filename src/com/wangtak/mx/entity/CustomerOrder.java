@@ -35,7 +35,6 @@ public class CustomerOrder {
 	int id;
 	@Column(unique = true)
 	String uniqueURL;
-	@Column(unique = true)
 	String orderCode;//PT+date+phone+shop id+2 digital number
 	@Column(unique = true)
 	String paymentReference; //the tx reference return from payment gateway
@@ -43,6 +42,12 @@ public class CustomerOrder {
 	Date createDate;
 	double amount;
 	double deliveryFee;
+	
+	//free gift
+	int minuteMaidAmount;// Minute Maid amount
+	int milkTeaCouponAmount; // MX milk Tea Coupon amount
+	int colaAmount; //coca cola amount
+	int redBeanPuddingAmount; // red bean pudding amount
 	
 	// Order Content
 	@OneToMany(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
@@ -344,6 +349,62 @@ public class CustomerOrder {
 		this.giftList = giftList;
 	}
 
+	/**
+	 * @return the minuteMaidAmount
+	 */
+	public int getMinuteMaidAmount() {
+		return minuteMaidAmount;
+	}
+
+	/**
+	 * @param minuteMaidAmount the minuteMaidAmount to set
+	 */
+	public void setMinuteMaidAmount(int minuteMaidAmount) {
+		this.minuteMaidAmount = minuteMaidAmount;
+	}
+
+	/**
+	 * @return the milkTeaCouponAmount
+	 */
+	public int getMilkTeaCouponAmount() {
+		return milkTeaCouponAmount;
+	}
+
+	/**
+	 * @param milkTeaCouponAmount the milkTeaCouponAmount to set
+	 */
+	public void setMilkTeaCouponAmount(int milkTeaCouponAmount) {
+		this.milkTeaCouponAmount = milkTeaCouponAmount;
+	}
+
+	/**
+	 * @return the colaAmount
+	 */
+	public int getColaAmount() {
+		return colaAmount;
+	}
+
+	/**
+	 * @param colaAmount the colaAmount to set
+	 */
+	public void setColaAmount(int colaAmount) {
+		this.colaAmount = colaAmount;
+	}
+
+	/**
+	 * @return the redBeanPuddingAmount
+	 */
+	public int getRedBeanPuddingAmount() {
+		return redBeanPuddingAmount;
+	}
+
+	/**
+	 * @param redBeanPuddingAmount the redBeanPuddingAmount to set
+	 */
+	public void setRedBeanPuddingAmount(int redBeanPuddingAmount) {
+		this.redBeanPuddingAmount = redBeanPuddingAmount;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -353,7 +414,10 @@ public class CustomerOrder {
 				+ ", orderCode=" + orderCode + ", paymentReference="
 				+ paymentReference + ", status=" + status + ", createDate="
 				+ createDate + ", amount=" + amount + ", deliveryFee="
-				+ deliveryFee + ", menuOrderList=" + menuOrderList
+				+ deliveryFee + ", minuteMaidAmount=" + minuteMaidAmount
+				+ ", milkTeaCouponAmount=" + milkTeaCouponAmount
+				+ ", colaAmount=" + colaAmount + ", redBeanPuddingAmount="
+				+ redBeanPuddingAmount + ", menuOrderList=" + menuOrderList
 				+ ", comboOrderList=" + comboOrderList + ", giftList="
 				+ giftList + ", customerName=" + customerName
 				+ ", customerPhoneNumber=" + customerPhoneNumber
@@ -364,7 +428,7 @@ public class CustomerOrder {
 	}
 
 	public String generateOrderCode() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MMdd");
 		//PT+date+phone+shop id+2 digital number
 		Date date = null;
 		String storeCode = null;
@@ -380,7 +444,7 @@ public class CustomerOrder {
 		}
 		double randomNumber =  Math.random()*1000;
 		
-		return "PT"+dateFormat.format(date)+storeCode+(int)randomNumber;
+		return "F"+dateFormat.format(date)+this.customerPhoneNumber+(int)randomNumber;
 	}
 
 	public String generateEmailContentType() {

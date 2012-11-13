@@ -19,7 +19,7 @@ public class CreditCard {
 	String holder;
 	String cardNumber; //only last 4 digital
 	int cardType;//0 for visa, 1 for master
-	int creditCardBankId; // consistent to CrediCardDsicountRuleId
+	int creditCardBankId; // 0 for other cards, 1 for Manhattan, 2 for 
 	String creditCardBank;
 	String validMonth;
 	String validYear;

@@ -31,6 +31,12 @@ public class SubmitOrderInput {
 	PickupInfo pickupInfo;
 	DeliveryInfo deliveryInfo;
 	
+	//free gift
+	int minuteMaidAmount;// Minute Maid amount
+	int milkTeaCouponAmount; // MX milk Tea Coupon amount
+	int colaAmount; //coca cola amount
+	int redBeanPuddingAmount; // red bean pudding amount
+	
 	/**
 	 * @return the menuOrderList
 	 */
@@ -154,6 +160,54 @@ public class SubmitOrderInput {
 	public void setPickup(boolean pickup) {
 		this.pickup = pickup;
 	}
+	/**
+	 * @return the minuteMaidAmount
+	 */
+	public int getMinuteMaidAmount() {
+		return minuteMaidAmount;
+	}
+	/**
+	 * @param minuteMaidAmount the minuteMaidAmount to set
+	 */
+	public void setMinuteMaidAmount(int minuteMaidAmount) {
+		this.minuteMaidAmount = minuteMaidAmount;
+	}
+	/**
+	 * @return the milkTeaCouponAmount
+	 */
+	public int getMilkTeaCouponAmount() {
+		return milkTeaCouponAmount;
+	}
+	/**
+	 * @param milkTeaCouponAmount the milkTeaCouponAmount to set
+	 */
+	public void setMilkTeaCouponAmount(int milkTeaCouponAmount) {
+		this.milkTeaCouponAmount = milkTeaCouponAmount;
+	}
+	/**
+	 * @return the colaAmount
+	 */
+	public int getColaAmount() {
+		return colaAmount;
+	}
+	/**
+	 * @param colaAmount the colaAmount to set
+	 */
+	public void setColaAmount(int colaAmount) {
+		this.colaAmount = colaAmount;
+	}
+	/**
+	 * @return the redBeanPuddingAmount
+	 */
+	public int getRedBeanPuddingAmount() {
+		return redBeanPuddingAmount;
+	}
+	/**
+	 * @param redBeanPuddingAmount the redBeanPuddingAmount to set
+	 */
+	public void setRedBeanPuddingAmount(int redBeanPuddingAmount) {
+		this.redBeanPuddingAmount = redBeanPuddingAmount;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -163,9 +217,12 @@ public class SubmitOrderInput {
 				+ ", comboOrderList=" + comboOrderList + ", customerName="
 				+ customerName + ", customerPhoneNumber=" + customerPhoneNumber
 				+ ", customerEmail=" + customerEmail + ", receivePromotion="
-				+ receivePromotion + ", creditCard=" + creditCard
-				+ ", isPickup=" + pickup + ", pickupInfo=" + pickupInfo
-				+ ", deliveryInfo=" + deliveryInfo + "]";
+				+ receivePromotion + ", creditCard=" + creditCard + ", pickup="
+				+ pickup + ", pickupInfo=" + pickupInfo + ", deliveryInfo="
+				+ deliveryInfo + ", minuteMaidAmount=" + minuteMaidAmount
+				+ ", milkTeaCouponAmount=" + milkTeaCouponAmount
+				+ ", colaAmount=" + colaAmount + ", redBeanPuddingAmount="
+				+ redBeanPuddingAmount + "]";
 	}
 	
 }

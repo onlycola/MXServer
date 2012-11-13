@@ -108,32 +108,45 @@ public class OnlineOrderEndpoint {
 		SubmitOrderResponse response = new SubmitOrderResponse();
 		// 2.generate url
 		String uniqueURL = UUID.randomUUID().toString();
-		Matcher m = p.matcher(order.getCreditCard().getCardNumber());
-		if(!m.matches())
-		{
-			log.warn("credit card is not the 4 digital number");
-			response.setError("credit card must be the last 4 digital number");
-			response.setOrderId(0);
-			return response;
-		}
+		//Todo: Add credit card later
+//		Matcher m = p.matcher(order.getCreditCard().getCardNumber());
+//		if(!m.matches())
+//		{
+//			log.warn("credit card is not the 4 digital number");
+//			response.setError("credit card must be the last 4 digital number");
+//			response.setOrderId(0);
+//			return response;
+//		}
 		EntityManager em = EMF.get().createEntityManager();
 		try {
 			// 1.calculate order
 			// Generate Order Code
 			order.setOrderCode(order.generateOrderCode());
 			// 1.1 caculate menu item
+			double totalPrice =0.0;
 			int bankId = order.getCreditCard().getCreditCardBankId();
-			CreditCardDiscountRule rule = em.find(CreditCardDiscountRule.class,
-					bankId);
-			double triggerAmount = 0.0;
-			double discountRate = 1;
-			if (rule != null) {
-				log.info("find the discount rule: " + rule);
-				triggerAmount = rule.getTriggerAmount();
-				discountRate = rule.getDiscountRate();
-				order.getCreditCard().setCreditCardBank(rule.getCardtitle());
+			double discountRate=1.0;
+			switch (bankId)
+			{
+			case 1:
+			case 2:
+				discountRate = 0.68;
+				break;
+			default:
+				discountRate =0.8;
 			}
-			double totalPrice = 0.0;
+			double triggerAmount =0.0;
+//			CreditCardDiscountRule rule = em.find(CreditCardDiscountRule.class,
+//					bankId);
+//			double triggerAmount = 0.0;
+//			double discountRate = 1;
+//			if (rule != null) {
+//				log.info("find the discount rule: " + rule);
+//				triggerAmount = rule.getTriggerAmount();
+//				discountRate = rule.getDiscountRate();
+//				order.getCreditCard().setCreditCardBank(rule.getCardtitle());
+//			}
+//			double totalPrice = 0.0;
 			// go through all menu item in order
 			if (order.getMenuOrderList() != null) {
 				for (MenuOrder i : order.getMenuOrderList()) {
@@ -210,7 +223,7 @@ public class OnlineOrderEndpoint {
 					}
 				}
 			}
-			order.setAmount(totalPrice);
+			order.setAmount(totalPrice+order.getMinuteMaidAmount()*10);
 
 			// Add delivery fee
 			if (order.isPickup()) {
@@ -220,13 +233,13 @@ public class OnlineOrderEndpoint {
 						.getDeliveryInfo().getDeliveryAreaId());
 				double deliveryFee = 0.0;
 				if (item != null) {
-					if (totalPrice > 688 && item.isFreeArea()) {
+					if (totalPrice > 1500 && item.isFreeArea()) {
 						deliveryFee = 0.0;
 					} else {
 						deliveryFee = item.getDeliveryFee();
 					}
 				} else {
-					deliveryFee = 400;
+					deliveryFee = 500;
 				}
 				order.setDeliveryFee(deliveryFee);
 			}
@@ -238,28 +251,31 @@ public class OnlineOrderEndpoint {
 			Set<CustomerOrderGift> gifts = new HashSet();
 			// Rule 2,3,4,6
 			if (now.before(calendar.getTime())) {
-				gifts.add(new CustomerOrderGift(LocalizationManager.GetGift1(), 1));
+				gifts.add(new CustomerOrderGift(LocalizationManager.GetGift1(), 2));
 
-				gifts.add(new CustomerOrderGift(
-						LocalizationManager.GetGift2(), 1));
+//				gifts.add(new CustomerOrderGift(
+//						LocalizationManager.GetGift2(), 1));
 
 				if (order.isPickup()) {
 					gifts.add(new CustomerOrderGift(
 							LocalizationManager.GetGift3(), 1));
 				}
 
-				int s = (int) (totalPrice / 1000);
-				if(s>0)
-				{
-					gifts.add(new CustomerOrderGift(LocalizationManager.GetGift4(), s));
-				}
+			
 			}
 
+			int sum = (int) (totalPrice / 500)*2;
+			if(sum>0)
+			{
+				gifts.add(new CustomerOrderGift(LocalizationManager.GetGift6(), order.getMinuteMaidAmount()));
+				gifts.add(new CustomerOrderGift(LocalizationManager.GetGift5(), sum-order.getMinuteMaidAmount()));
+			}
+			
 			// Rule 5
-			int t = (int) (totalPrice / 300);
+			int t = (int) (totalPrice / 1500);
 			if(t>0)
 			{
-				gifts.add(new CustomerOrderGift(LocalizationManager.GetGift5(), t));
+				gifts.add(new CustomerOrderGift(LocalizationManager.GetGift4(), t));
 			}
 
 			order.setGiftList(gifts);
@@ -496,7 +512,7 @@ public class OnlineOrderEndpoint {
 												.getCreditCard()
 												.getValidMonth(),
 										order.getCreditCard().getValidYear(),
-										order.getAmount(),
+										order.getAmount()+order.getDeliveryFee(),
 										order.getOrderCode(), order
 												.getCustomerEmail());
 						if (paymentResult.isSucceed()) {
@@ -562,7 +578,7 @@ public class OnlineOrderEndpoint {
 			{
 				if(order.getStatus()==OrderStatus.Confirm)
 				{
-					response += "<h3>您已訂購成功，訂單號:"+order.getOrderCode()+"</h3>";
+					response += "<h3>您已訂購成功，參考編號:"+order.getOrderCode()+"</h3>";
 					response += "您將在15分鐘內收到訂單郵件,如需修改或取消訂單請撥打熱線2101-1850";
 					response += "<br>謝謝惠顧！";
 				}
@@ -586,16 +602,16 @@ public class OnlineOrderEndpoint {
 	@Produces("text/html;charset=utf-8")
 	public String getOrderError(@PathParam("errorCode") int errorCode) {
 		log.info("getOrderError" + errorCode);
-		String ErrorString = "è¨‚å–®æ��äº¤å¤±æ•—";
+		String ErrorString = "訂單錯誤";
 		switch (errorCode) {
 		case CreditCardError:
-			ErrorString = "ä¿¡ç”¨å�¡éŒ¯èª¤";
+			ErrorString = "信用卡錯誤";
 			break;
 		case OutOfDate:
-			ErrorString = "äº¤æ˜“é�ŽæœŸ";
+			ErrorString = "過期訂單";
 			break;
 		case NotExist:
-			ErrorString = "äº¤æ˜“ä¸�å­˜åœ¨";
+			ErrorString = "訂單不存在";
 			break;
 		default:
 			break;

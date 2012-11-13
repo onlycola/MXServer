@@ -3,6 +3,7 @@
  */
 package com.wangtak.mx.entity;
 
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -27,6 +28,7 @@ public class MenuItem {
 	String title; //title for menu item
 	String subtitle; //subtitle for menu item
 	String picturURL; //the image url for this menu item
+	Date lastPickupDate; //the food can not pickup after the date
 	@OneToMany(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
 	Set<MenuItemOption> menuItemOptionList; // Menu Options for this menu item
 	/**
@@ -101,6 +103,18 @@ public class MenuItem {
 	 */
 	public void setPicturURL(String picturURL) {
 		this.picturURL = picturURL;
+	}
+	/**
+	 * @return the lastPickupDate
+	 */
+	public Date getLastPickupDate() {
+		return lastPickupDate;
+	}
+	/**
+	 * @param lastPickupDate the lastPickupDate to set
+	 */
+	public void setLastPickupDate(Date lastPickupDate) {
+		this.lastPickupDate = lastPickupDate;
 	}
 	@Override
 	public String toString() {

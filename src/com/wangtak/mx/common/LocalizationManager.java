@@ -34,11 +34,11 @@ public class LocalizationManager {
 	}
 
 	public static String GetGift4() {
-		return "兩磅裝麵包步甸";
+		return "2磅香滑紅豆糕";
 	}
 
 	public static String GetGift3() {
-		return "免費皇牌豬扒飯連汽水卷";
+		return "$30燒味禮券";
 	}
 
 	public static String GetGift5() {
@@ -47,6 +47,11 @@ public class LocalizationManager {
 
 	public static String GetAPIPref() {
 		return "http://mx.wangtaktech.com/api/order/";
+	}
+
+	public static String GetGift6() {
+		// TODO Auto-generated method stub
+		return "1.8公升果粒橙";
 	}
 	
 	

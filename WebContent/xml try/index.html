@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>無標題文件</title>
+<script type="text/javascript">
+var page = 1, perPage = 4, content = document.getElementById('content'),
+pagination = document.getElementById('pagination'), records;
+
+function paganation(page)
+{
+    var nextMaxItem = perPage * page;
+    var fromItem = (page - 1) * perPage;
+    var maxPages = records.length / perPage;
+
+    var xmlContent = "<table border='1'>";
+    for (var i = fromItem; i < nextMaxItem; i++) {
+        xmlContent += "<tr><td>";
+        xmlContent += records[i].getElementsByTagName("ARTIST")[0].childNodes[0].nodeValue;
+        xmlContent += "</td><td>";
+        xmlContent += records[i].getElementsByTagName("TITLE")[0].childNodes[0].nodeValue;
+        xmlContent += "</td></tr>";
+    }
+    xmlContent += "</table>";
+    content.innerHTML = xmlContent;
+
+    var paginationContent = "";
+    var previous = page - 1;
+    if (page > 1) {
+        paginationContent += '<a href="javascript:paganation('+previous+');">Back</a>';
+    } else {
+        paginationContent += "Back";
+    }
+
+    for (var j = 1; j < Math.ceil(maxPages); j++) {
+        paginationContent += " ";
+        paginationContent += '<a href="javascript:paganation('+j+');">'+j+'</a>';
+        paginationContent += " ";
+    }
+
+    var next = page + 1;
+    if (next <= maxPages) {
+        paginationContent += '<a href="javascript:paganation('+next+');">Next</a>';
+    } else {
+        paginationContent += "Next";
+    }
+    pagination.innerHTML = paginationContent;
+}
+
+if (window.XMLHttpRequest)
+{// code for IE7+, Firefox, Chrome, Opera, Safari
+    xmlhttp=new XMLHttpRequest();
+}
+else
+{// code for IE6, IE5
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+}
+xmlhttp.open("GET","cd_catalog.xml",false);
+xmlhttp.send();
+xmlDoc=xmlhttp.responseXML; 
+records = xmlDoc.getElementsByTagName("CD");
+paganation(1);
+</script>
+</head>
+
+<body>
+<div id="content"></div>
+<div id="pagination"></div>
+</body>
+</html>

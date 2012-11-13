@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<items>
+<item id="1">
+<name>栗金團</name>
+<genre>和菓子</genre>
+<price>500</price>
+<sales>10</sales>
+</item>
+<item id="2">
+<name>大福</name>
+<genre>和菓子</genre>
+<price>300</price>
+<sales>30</sales>
+</item>
+<item id="3">
+<name>蛋糕捲</name>
+<genre>洋菓子</genre>
+<price>800</price>
+<sales>23</sales>
+</item>
+<item id="4">
+<name>起司蛋糕</name>
+<genre>洋菓子</genre>
+<price>600</price>
+<sales>12</sales>
+</item>
+<item id="5">
+<name>水羊羹</name>
+<genre>和菓子</genre>
+<price>150</price>
+<sales>50</sales>
+</item>
+</items>
