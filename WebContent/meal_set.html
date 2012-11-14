@@ -80,13 +80,13 @@
                             </tr>
                             <tr>
                             	<td>
-                                	<span class="mealset_price">售價$278</span><input type="submit" class="meal_purchase" value="訂購"/>
+                                	<span class="mealset_price">售價$278</span><form style="display:inline" action="#" name="meal_set_one"><input type="submit" class="meal_purchase" value="訂購"/></form>
                                 </td>
                                 <td>
-                                	<span class="mealset_price">售價$278</span><input type="submit" class="meal_purchase" value="訂購"/>
+                                	<span class="mealset_price">售價$278</span><form action="#" style="display:inline" name="meal_set_one"><input type="submit" class="meal_purchase" value="訂購"/></form>
                                 </td>
                                 <td>
-                                	<span class="mealset_price">售價$278</span><input type="submit" class="meal_purchase" value="訂購"/>
+                                	<span class="mealset_price">售價$278</span><form action="#" style="display:inline" name="meal_set_one"><input type="submit" class="meal_purchase" value="訂購"/></form>
                                 </td>
                             </tr>
                             <tr>
@@ -191,9 +191,11 @@
                         <div class="total_section">
                         	<div class="payment_method f_left">
                             	<h3>總價</h3>
+                                <form action="#" name="card_payment">
                                 <input type="radio" name="payment" value="hs_enjoy"/><span>恆生enjoy卡</span><br />
                                 <input type="radio" name="payment" value="hsbc"/><span>匯豐信用卡</span><br />
                                 <input type="radio" name="payment" value="others"/><span>其他信用卡</span><br />
+                                </form>
                             </div>
                             <div class="final_cost f_left">
                             	<span>$300.00</span>
