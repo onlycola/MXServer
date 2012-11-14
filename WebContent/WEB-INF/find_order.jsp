@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>訂單狀態</title>
 </head>
-<body>
+<body bgcolor="#EBEBEB">
 <h3>訂單狀態:</h3>
         <table border="1">
         <tr>

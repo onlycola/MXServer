@@ -563,7 +563,7 @@ public class CustomerOrder {
 		orderContent += "<br>";
 		orderContent += "謝謝惠顧！";
 		orderContent += "<br>";
-		orderContent += "如需修改或取消訂單請撥打熱線2101-1850";
+		orderContent += "如需修改或取消訂單請撥打熱線2101-1293";
 		
 		return "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><body>"
 				+ orderContent+ "</body></html>";

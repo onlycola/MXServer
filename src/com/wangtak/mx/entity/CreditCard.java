@@ -112,7 +112,7 @@ public class CreditCard {
 		case 0:
 			return "VISA";
 		case 1:
-			return "MASTER";
+			return "MASTERCARD";
 		default:
 			return "";
 		}
@@ -133,7 +133,15 @@ public class CreditCard {
 	 * @return the creditCardBank
 	 */
 	public String getCreditCardBank() {
-		return creditCardBank;
+		switch(this.creditCardBankId)
+		{
+		case 1:
+			return "Manhattan信用卡";
+		case 2:
+			return "渣打信用卡";
+		default:
+			return "其它信用卡";
+		}
 	}
 	/**
 	 * @param creditCardBank the creditCardBank to set
