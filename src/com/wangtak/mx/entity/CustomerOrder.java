@@ -452,7 +452,7 @@ public class CustomerOrder {
 	}
 
 	public String generateEmailContent() {
-		String orderContent = "<h3>訂單內容:</h3>";
+		String orderContent = "<h3>訂單參考編號:"+this.orderCode+"</h3><br>－閣下已完成網上訂購，於24小時內將有專人以電話核實閣下的訂單及告知閣下有關之訂單編號<br>－客戶可憑落單訂單時輸入的手提電話號碼或訂單編號作訂單查詢<h3>訂單內容:</h3>";
 		orderContent += "<table border=\"1\"><tr> <th>您所選擇的產品</th> <th>數量</th> <th>金額 </th></tr>";
 		//Menu item
 		List<MenuOrder> itemList = new ArrayList(this.getMenuOrderList());
@@ -570,7 +570,7 @@ public class CustomerOrder {
 	}
 
 	public String generateEmailSubject() {
-		return "美心美食派對訂單" + this.getOrderCode();
+		return "美心MX聖誕美食訂購確認";
 	}
 
 }

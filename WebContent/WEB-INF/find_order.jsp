@@ -9,13 +9,12 @@
 </head>
 <body bgcolor="#EBEBEB">
 <h3>訂單狀態:</h3>
+	<c:forEach items="${orders}" var="order" varStatus="loop">
         <table border="1">
-        <tr>
-		<th>日期</th> <th>訂單編號</th> <th>取貨方式</th> <th>訂單狀態</th> </tr>
-            <c:forEach items="${orders}" var="order" varStatus="loop">
-                <tr><td><c:out value="${(order.dateStr)}"/></td>
-                <td><c:out value="${order.orderCode}"/></td>
-                <c:choose>
+        <tr style="background:#9D1523;color:#fff"><td>訂單編號</td><td><c:out value="${order.orderCode}"/></td></tr>
+        <tr><td>日期</td><td><c:out value="${(order.dateStr)}"/></td></tr>
+         <tr>  
+            <td>取貨方式</td><c:choose>
                 <c:when test="${order.pickup}">
                 <td>分店自取</td>
                 </c:when>
@@ -23,7 +22,9 @@
                 <td>送貨</td>
                 </c:otherwise>
                 </c:choose>
-                <td><c:out value="${order.statusStr}"/></td></tr>
+                </tr>
+            <tr> <td>訂單狀態</td><td><c:out value="${order.statusStr}"/></td></tr>
+			<br>
                 
             </c:forEach>
         </table>

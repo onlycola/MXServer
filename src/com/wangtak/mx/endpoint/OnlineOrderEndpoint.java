@@ -69,7 +69,7 @@ public class OnlineOrderEndpoint {
 	// private static final String Prefix =
 	// "http://127.0.0.1:8080/MXServer/api/order/";
 	private static final String Prefix = LocalizationManager.GetAPIPref();
-	private static final int VALID_PERIOD = -10; // 10min
+	private static final int VALID_PERIOD = -10000; // 10min
 	private static Logger log = Logger.getLogger(OnlineOrderEndpoint.class);
 	private static Pattern p = Pattern.compile("\\d{4}");
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("MMM/dd/yyyy");
@@ -242,10 +242,17 @@ public class OnlineOrderEndpoint {
 						.getDeliveryInfo().getDeliveryAreaId());
 				double deliveryFee = 0.0;
 				if (item != null) {
-					if (totalPrice > 1500 && item.isFreeArea()) {
+					if (totalPrice > 1500)
+					{
+						if( item.isFreeArea()) {
 						deliveryFee = 0.0;
+						}
+						else
+						{
+							deliveryFee = 300;
+						}
 					} else {
-						deliveryFee = 300;
+						deliveryFee = item.getDeliveryFee();
 					}
 				} else {
 					deliveryFee = 500;
@@ -276,8 +283,14 @@ public class OnlineOrderEndpoint {
 			int sum = (int) (totalPrice / 500)*2;
 			if(sum>0)
 			{
-				gifts.add(new CustomerOrderGift(LocalizationManager.GetGift6(), order.getMinuteMaidAmount()));
-				gifts.add(new CustomerOrderGift(LocalizationManager.GetGift5(), sum-order.getMinuteMaidAmount()));
+				if(order.getMinuteMaidAmount()>0)
+				{
+					gifts.add(new CustomerOrderGift(LocalizationManager.GetGift6(), order.getMinuteMaidAmount()));
+				}
+				if(sum-order.getMinuteMaidAmount()>0)
+				{
+					gifts.add(new CustomerOrderGift(LocalizationManager.GetGift5(), sum-order.getMinuteMaidAmount()));
+				}
 			}
 			
 			// Rule 5
@@ -348,7 +361,7 @@ public class OnlineOrderEndpoint {
 			List<CustomerOrder> orders = query.getResultList();
 			if (orders.size() > 0) {
 				String orderContent = "<h3>訂單內容:</h3>";
-				orderContent += "<table border=\"1\"><tr> <th>您所選擇的產品</th> <th>數量</th> <th>金額 </th></tr>";
+				orderContent += " <table BORDER=1 CELLPADDING=3 CELLSPACING=1 RULES=ROWS FRAME=HSIDES cellpadding=\"0\" cellspacing=\"0\" class=\"mobile_table\"><tbody><tr style=\"background:#9D1523;color:#fff\"><th style=\"text-align:left\">您所選擇的產品</th> <th width=\"40\" style=\"text-align:center\">   數量    </th> <th width=\"30\" style=\"text-align:right\">總額 </th>";
 				CustomerOrder order = orders.get(0);
 				//Menu item
 				List<MenuOrder> itemList = new ArrayList(order.getMenuOrderList());
@@ -363,7 +376,7 @@ public class OnlineOrderEndpoint {
 				{
 					if(o.getAmount()>0)
 					{
-						orderContent +="<tr><td>"+o.getTitleForDisplay()+"</td><td>x"+o.getAmount()+"</td><td>"+NumberFormat.getCurrencyInstance().format(o.getTotalPrice())+"</td></tr>";
+						orderContent +="<tr><td>"+o.getTitleForDisplay()+"</td><td style=\"text-align:center\">"+o.getAmount()+"</td><td style=\"text-align:center\">"+NumberFormat.getCurrencyInstance().format(o.getTotalPrice())+"</td></tr>";
 					}
 				}
 				
@@ -380,7 +393,7 @@ public class OnlineOrderEndpoint {
 				{
 					if(o.getAmount()>0)
 					{
-						orderContent +="<tr><td>"+o.getTitleForDisplay()+"</td><td>x"+o.getAmount()+"</td><td>"+NumberFormat.getCurrencyInstance().format(o.getTotalPrice())+"</td></tr>";
+						orderContent +="<tr><td>"+o.getTitleForDisplay()+"</td><td style=\"text-align:center\">"+o.getAmount()+"</td><td style=\"text-align:center\">"+NumberFormat.getCurrencyInstance().format(o.getTotalPrice())+"</td></tr>";
 					}
 
 				}
@@ -394,13 +407,13 @@ public class OnlineOrderEndpoint {
 					{
 						amount = order.getAmount();
 					}
-					orderContent += "<tr><td></td><td><b>總計</b></td><td>"+NumberFormat.getCurrencyInstance().format(amount)+"</td></tr>";
+					orderContent += "<tr></tr><tr><td></td><td><b>總計</b></td><td>"+NumberFormat.getCurrencyInstance().format(amount)+"</td></tr>";
 				}
 				else
 				{
 					orderContent += "<tr><td></td><td>小計</td><td>"+NumberFormat.getCurrencyInstance().format(order.getAmount())+"</td></tr>";
 					orderContent +="<tr><td>送貨費</td><td></td><td>"+NumberFormat.getCurrencyInstance().format(order.getDeliveryFee())+"</td></tr>";
-					orderContent += "<tr><td></td><td><b>總計</b></td><td>"+NumberFormat.getCurrencyInstance().format(order.getAmount()+order.getDeliveryFee())+"</td></tr>";
+					orderContent += "<tr></tr><tr><td></td><td><b>總計</b></td><td>"+NumberFormat.getCurrencyInstance().format(order.getAmount()+order.getDeliveryFee())+"</td></tr>";
 				}
 				//orderContent += "</table>";
 				//orderContent += "<br/>";
@@ -417,18 +430,22 @@ public class OnlineOrderEndpoint {
 				});
 				
 				//orderContent += "<table border=\"1\">";
+				if(gifts.size()>0)
+				{
+					orderContent += "<tr><td>優惠</td></tr>";
+				}
 				for(CustomerOrderGift gift: gifts)
 				{
-					orderContent += "<tr><td>"+gift.getTitle()+"</td><td>x"+gift.getAmount()+"</td><td></td></tr>";
+					orderContent += "<tr><td>"+gift.getTitle()+"</td><td>"+gift.getAmount()+"</td><td></td></tr>";
 					
 				}
-				orderContent += "</table>";
+				orderContent += "</tbody></table>";
 				
 				orderContent +="<br/>";
 				
-				orderContent +="<h3>顧客信息:</h3>";
-				orderContent += "<table border=\"1\">";
-				orderContent +="<tr><td>顧客姓名：</td><td>"+order.getCustomerName()+"</td></tr>";
+				orderContent +="<h3 style=\"margin:0;background-color:#9D1523;color:#fff;width:200px\">顧客信息:</h3><table style='table-layout:fixed;' BORDER=1 CELLPADDING=3 CELLSPACING=1 RULES=ROWS FRAME=HSIDES cellpadding=\"0\" cellspacing=\"0\"><tbody>";
+				//orderContent +="<th width=\"80\" style=\"text-align:center\">顧客信息:  </th><th></th>";
+				orderContent +="<tbody><tr><td width=\"100\">顧客姓名：</td><td>"+order.getCustomerName()+"</td></tr>";
 				orderContent +="<tr><td>顧客電話：</td><td>"+order.getCustomerPhoneNumber()+"</td></tr>";
 				orderContent +="<tr><td>顧客電郵：</td><td>"+order.getCustomerEmail()+"</td></tr>";
 				orderContent +="<tr><td>付款方式：</td><td>信用卡</td></tr>";
@@ -454,12 +471,12 @@ public class OnlineOrderEndpoint {
 					orderContent +="<tr><td>收貨人：</td><td>"+order.getDeliveryInfo().getName()+"</td></tr>";
 					orderContent +="<tr><td>收貨人電話：</td><td>"+order.getDeliveryInfo().getPhoneNumber()+"</td></tr>";
 				}								
-				orderContent += "</table>";
+				orderContent += "</tbody></table>";
 				
-				response = "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><body bgcolor=\"#EBEBEB\">"
+				response = "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><style>table {table-layout:fixed}</style></header><body style=\"margin:0;padding:0;border:0;max-width:318px\">"
 						+ orderContent+ "</body></html>";
 			} else {
-				response = "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><body bgcolor=\"#EBEBEB\"><h1>Not Found</h1></body></html>";
+				response = "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /></header><body bgcolor=\"#EBEBEB\"><h1>Not Found</h1></body></html>";
 			}
 		} finally {
 			em.close();

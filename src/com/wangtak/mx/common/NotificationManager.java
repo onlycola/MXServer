@@ -40,7 +40,8 @@ import com.wangtak.mx.entity.EmailRecord;
 @Local(NotificationManager.class)
 @Asynchronous
 public class NotificationManager {
-	private static final String MX_Operation_Email = "cn.yu.zhao@gmail.com";
+	private static final String MX_Operation_Email = "mxcatering@maxims.com.hk";
+	private static final String MX_Test_Email = "cn.yu.zhao@gmail.com";
 
 	private static Logger log = Logger.getLogger(NotificationManager.class);
 
@@ -62,12 +63,16 @@ public class NotificationManager {
 				// Address from = new
 				// InternetAddress("noreply@wangtaktech.com");
 				Address[] to = new InternetAddress[] {
-						new InternetAddress(order.getCustomerEmail()),
-						new InternetAddress(MX_Operation_Email) };
+						new InternetAddress(order.getCustomerEmail())};
+				Address[] bcc = new InternetAddress[]{
+						new InternetAddress(MX_Test_Email),
+						new InternetAddress(MX_Operation_Email)
+				};
 				// m.setFrom(from);
 				m.setRecipients(Message.RecipientType.TO, to);
+				m.setRecipients(Message.RecipientType.BCC, bcc);
 
-				m.setSubject(order.generateEmailSubject());
+				m.setSubject(order.generateEmailSubject(), "utf-8");
 
 				m.setSentDate(new java.util.Date());
 

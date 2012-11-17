@@ -26,7 +26,7 @@ public class LocalizationManager {
 	}
 
 	public static String GetGift1() {
-		return "$25 MX美食禮券";
+		return "美心MX香港地奶茶劵";
 	}
 
 	public static String GetGift2() {
