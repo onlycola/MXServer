@@ -20,6 +20,7 @@ public class PickupInfo {
 	int id;
 	Date pickupDate;
 	String storeCode;
+	String storeTitle;
 	String pickupPeriod;
 	String storeAddress;
 	String storePhonenumber;
@@ -82,6 +83,18 @@ public class PickupInfo {
 	 */
 	public void setStorePhonenumber(String storePhonenumber) {
 		this.storePhonenumber = storePhonenumber;
+	}
+	/**
+	 * @return the storeTitle
+	 */
+	public String getStoreTitle() {
+		return storeTitle;
+	}
+	/**
+	 * @param storeTitle the storeTitle to set
+	 */
+	public void setStoreTitle(String storeTitle) {
+		this.storeTitle = storeTitle;
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
