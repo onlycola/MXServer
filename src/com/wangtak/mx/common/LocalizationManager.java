@@ -46,7 +46,10 @@ public class LocalizationManager {
 	}
 
 	public static String GetAPIPref() {
-		return "http://mx.wangtaktech.com/api/order/";
+		//For Test Server
+		//return "http://mx.wangtaktech.com/api/order/";
+		//For Production Server
+		return "https://www.maximsmx.com.hk/api/order/";
 	}
 
 	public static String GetGift6() {

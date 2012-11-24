@@ -53,6 +53,6 @@ public class ConfirmOrderInput {
 	@Override
 	public String toString() {
 		return "ConfirmOrderInput [orderId=" + orderId + ", uniqueURL="
-				+ uniqueURL + ", cardNumber=" + cardNumber + "]";
+				+ uniqueURL + ", cardNumber=" + cardNumber.substring(cardNumber.length()-4, cardNumber.length()) + "]";
 	}
 }

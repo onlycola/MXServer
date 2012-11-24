@@ -41,7 +41,8 @@ import com.wangtak.mx.entity.EmailRecord;
 @Asynchronous
 public class NotificationManager {
 	private static final String MX_Operation_Email = "mxcatering@maxims.com.hk";
-	private static final String MX_Test_Email = "cn.yu.zhao@gmail.com";
+	private static final String MX_Test1_Email = "cn.yu.zhao@gmail.com";
+	private static final String MX_Test2_Email = "anthonytsui@maxims.com.hk";
 
 	private static Logger log = Logger.getLogger(NotificationManager.class);
 
@@ -60,15 +61,15 @@ public class NotificationManager {
 			if (mailSession != null) {
 
 				MimeMessage m = new MimeMessage(mailSession);
-				// Address from = new
-				// InternetAddress("noreply@wangtaktech.com");
+				Address from = new InternetAddress(MX_Operation_Email);
 				Address[] to = new InternetAddress[] {
 						new InternetAddress(order.getCustomerEmail())};
 				Address[] bcc = new InternetAddress[]{
-						new InternetAddress(MX_Test_Email),
+						new InternetAddress(MX_Test1_Email),
+						new InternetAddress(MX_Test2_Email),
 						new InternetAddress(MX_Operation_Email)
 				};
-				// m.setFrom(from);
+				m.setFrom(from);
 				m.setRecipients(Message.RecipientType.TO, to);
 				m.setRecipients(Message.RecipientType.BCC, bcc);
 

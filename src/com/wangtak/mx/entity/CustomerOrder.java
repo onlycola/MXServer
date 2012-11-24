@@ -32,7 +32,7 @@ import com.wangtak.mx.endpoint.OnlineOrderEndpoint;
  */
 @Entity
 public class CustomerOrder {
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("MMM/dd/yyyy");
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 	
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	int id;
@@ -45,6 +45,7 @@ public class CustomerOrder {
 	Date createDate;
 	double amount;
 	double deliveryFee;
+	String remark;
 	
 	//free gift
 	int minuteMaidAmount;// Minute Maid amount
@@ -408,6 +409,20 @@ public class CustomerOrder {
 		this.redBeanPuddingAmount = redBeanPuddingAmount;
 	}
 
+	/**
+	 * @return the remark
+	 */
+	public String getRemark() {
+		return remark;
+	}
+
+	/**
+	 * @param remark the remark to set
+	 */
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -427,11 +442,11 @@ public class CustomerOrder {
 				+ ", customerEmail=" + customerEmail + ", receivePromotion="
 				+ receivePromotion + ", creditCard=" + creditCard + ", pickup="
 				+ pickup + ", pickupInfo=" + pickupInfo + ", deliveryInfo="
-				+ deliveryInfo + "]";
+				+ deliveryInfo + ", remark="+remark+"]";
 	}
 
 	public String generateOrderCode() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MMdd");
+		SimpleDateFormat shortDateFormat = new SimpleDateFormat("MMdd");
 		//PT+date+phone+shop id+2 digital number
 		Date date = null;
 		String storeCode = null;
@@ -447,7 +462,7 @@ public class CustomerOrder {
 		}
 		double randomNumber =  Math.random()*1000;
 		
-		return "F"+dateFormat.format(date)+this.customerPhoneNumber+(int)randomNumber;
+		return "F"+shortDateFormat.format(date)+this.customerPhoneNumber+(int)randomNumber;
 	}
 
 	public String generateEmailContentType() {
@@ -455,7 +470,7 @@ public class CustomerOrder {
 	}
 
 	public String generateEmailContent() {
-		String orderContent = "<h3>訂單參考編號:"+this.orderCode+"</h3><br>－閣下已完成網上訂購，於24小時內將有專人以電話核實閣下的訂單及告知閣下有關之訂單編號<br>－客戶可憑落單訂單時輸入的手提電話號碼或訂單編號作訂單查詢<h3>訂單內容:</h3>";
+		String orderContent = "<h3>訂單參考編號:"+this.orderCode+"</h3><br>－閣下已完成網上訂購，於24小時內將有專人以電話核實閣下的訂單及告知閣下有關之訂單編號<br>－客戶可憑落單時輸入的手提電話號碼或訂單編號作訂單查詢<h3>訂單內容:</h3>";
 
 		orderContent += " <table BORDER=1 CELLPADDING=3 CELLSPACING=1 RULES=ROWS FRAME=HSIDES cellpadding=\"0\" cellspacing=\"0\" class=\"mobile_table\"><tbody><tr style=\"background:#9D1523;color:#fff\"><th style=\"text-align:left\">您所選擇的產品</th> <th width=\"40\" style=\"text-align:center\">   數量    </th> <th width=\"30\" style=\"text-align:right\">總額 </th>";
 		CustomerOrder order = this;
@@ -622,10 +637,21 @@ public class CustomerOrder {
 		}								
 		orderContent += "</tbody></table>";
 		
+		orderContent +="<div style=\"width:200px\">";
+		orderContent +="<br><strong>註明事項:</strong><br>";
+		if(order.remark!=null)
+		{
+			orderContent +=order.remark;
+		}
+		else
+		{
+			orderContent +="無";
+		}
+		orderContent += "</div>";
 		orderContent += "<br>";
 		orderContent += "謝謝惠顧！";
 		orderContent += "<br>";
-		orderContent += "如需修改或取消訂單請撥打熱線2101-1293";
+		orderContent += "如需修改訂單請撥打熱線2101-1293";
 		
 		return "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><body>"
 				+ orderContent+ "</body></html>";

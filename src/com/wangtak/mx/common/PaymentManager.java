@@ -11,6 +11,8 @@ import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
 
 import org.jboss.logging.Logger;
 
@@ -31,15 +33,32 @@ public class PaymentManager {
 
 	private static Logger log = Logger.getLogger(OnlineOrderEndpoint.class);
 
+//	@Inject
+//	private ServletContext context;
+	
 	/* Create the ePayLink Client Object */
 	private static ePayLinkClient eplc = new ePayLinkClient();
+	
+	private String config_path;
 
+	
 	@PostConstruct
 	void init() {
 		log.info("=========== INITIALIZING! ===========");
-
+	
+//		ServletLifecycle.getServletContext().getInitParameter("ePayLinkPKI_conf");
+//		config_path = context.getInitParameter("ePayLinkPKI_conf");
+//
+//		config_path.trim();
+//		log.info("configu_path:"+config_path);
+		
 		/* Load the config file */
+		//Production Server
 		eplc.setConfigFile("C:\\Program Files (x86)\\ePayLinkPKI\\conf\\ePayLinkPKI.conf");
+		//Test Server
+		//eplc.setConfigFile("C:\\Program Files (x86)\\ePayLinkPKI\\conf\\ePayLinkPKI.conf");
+		
+		
 		/* Check whether the config file is correctly loaded */
 		if (eplc.isConfigFileCorrect() == false) {
 			log.error("Config file incorrect");
@@ -85,7 +104,9 @@ public class PaymentManager {
 				/* Define the parameters for the transaction */
 				String paymentType = new String("cc");
 				String referenceNo = orderCode;
-				double amount = amountInHKD * 100.0;
+				//For Testing
+				//double amount = amountInHKD * 100.0;
+				double amount = amountInHKD * 1.0;
 				String locale = new String("zh");
 				String currCode = new String("344");
 				String opCode = new String("00");// capture and sale

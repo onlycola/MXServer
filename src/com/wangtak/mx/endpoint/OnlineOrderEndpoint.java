@@ -69,10 +69,10 @@ public class OnlineOrderEndpoint {
 	// private static final String Prefix =
 	// "http://127.0.0.1:8080/MXServer/api/order/";
 	private static final String Prefix = LocalizationManager.GetAPIPref();
-	private static final int VALID_PERIOD = -10000; // 10min
+	private static final int VALID_PERIOD = -10; // 10min
 	private static Logger log = Logger.getLogger(OnlineOrderEndpoint.class);
 	private static Pattern p = Pattern.compile("\\d{4}");
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("MMM/dd/yyyy");
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
     
 	
     @Resource(lookup="java:jboss/mail/Default")
@@ -261,7 +261,7 @@ public class OnlineOrderEndpoint {
 //				gifts.add(new CustomerOrderGift(
 //						LocalizationManager.GetGift2(), 1));
 
-				if (order.isPickup()) {
+				if (order.isPickup()&&order.getAmount()>=1500.0) {
 					gifts.add(new CustomerOrderGift(
 							LocalizationManager.GetGift3(), 1));
 				}
@@ -516,6 +516,18 @@ public class OnlineOrderEndpoint {
 				}								
 				orderContent += "</tbody></table>";
 				
+				orderContent +="<div style=\"width:200px\">";
+				orderContent +="<br><strong>註明事項:</strong><br>";
+				if(order.getRemark()!=null)
+				{
+					orderContent +=order.getRemark();
+				}
+				else
+				{
+					orderContent += "無";
+				}
+				orderContent+="</div>";
+				
 				response = "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><style>table {table-layout:fixed}</style></header><body style=\"margin:0;padding:0;border:0;max-width:318px\">"
 						+ orderContent+ "</body></html>";
 			} else {
@@ -575,6 +587,7 @@ public class OnlineOrderEndpoint {
 					if (order.getCreateDate().compareTo(calendar.getTime()) >= 0) {
 						
 						// 3. make payment
+						
 						PaymentResult paymentResult = paymentManager
 								.transaction(order.getCreditCard().getHolder(),
 										input.getCardNumber(), order.getCreditCard().getCardTypeString(), order
@@ -584,6 +597,8 @@ public class OnlineOrderEndpoint {
 										order.getAmount()+order.getDeliveryFee(),
 										order.getOrderCode(), order
 												.getCustomerEmail());
+												
+						
 						if (paymentResult.isSucceed()) {
 							// transaction success
 
@@ -648,7 +663,7 @@ public class OnlineOrderEndpoint {
 				if(order.getStatus()==OrderStatus.Confirm)
 				{
 					response += "<h3>您已訂購成功，參考編號:"+order.getOrderCode()+"</h3>";
-					response += "您將在15分鐘內收到訂單郵件,如需修改或取消訂單請撥打熱線2101-1293";
+					response += "您將在15分鐘內收到訂單郵件,如需修改訂單請撥打熱線2101-1293";
 					response += "<br>謝謝惠顧！";
 				}
 				else
